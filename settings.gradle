@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "SystemBarTest"
+rootProject.name = "SystemBar"
 include ':app'
 include ':systembar'
