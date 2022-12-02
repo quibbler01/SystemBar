@@ -52,13 +52,13 @@ class BarConfig(activity: Activity) {
 
     }
 
-    private val mStatusBarHeight: Int
-    private val mActionBarHeight: Int
-    private val mHasNavigationBar: Boolean
-    private val mNavigationBarHeight: Int
-    private val mNavigationBarWidth: Int
-    private val mInPortrait: Boolean
-    private val mSmallestWidthDp: Float
+    val mStatusBarHeight: Int
+    val mActionBarHeight: Int
+    val mHasNavigationBar: Boolean
+    val mNavigationBarHeight: Int
+    val mNavigationBarWidth: Int
+    val mInPortrait: Boolean
+    val mSmallestWidthDp: Float
 
     init {
         val res = activity.resources
