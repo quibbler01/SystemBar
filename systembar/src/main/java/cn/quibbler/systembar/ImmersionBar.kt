@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Build
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.annotation.ColorInt
@@ -598,6 +599,393 @@ class ImmersionBar : ImmersionCallback {
         mBarParams?.navigationBarAlpha = barAlpha
         return this
     }
+
+    /**
+     * The final color of the status bar according to transparency
+     *
+     * @param statusBarColorTransform the status bar color transform
+     * @return the immersion bar
+     */
+    fun statusBarColorTransform(@ColorRes statusBarColorTransform: Int): ImmersionBar {
+        return this.statusBarColorTransformInt(ContextCompat.getColor(mActivity,statusBarColorTransform))
+    }
+
+    /**
+     * The final color of the status bar according to transparency
+     *
+     * @param statusBarColorTransform the status bar color transform
+     * @return the immersion bar
+     */
+    fun statusBarColorTransform(statusBarColorTransform:String):ImmersionBar{
+        return this.statusBarColorTransformInt(Color.parseColor(statusBarColorTransform));
+    }
+
+    /**
+     * The final color of the status bar according to transparency
+     *
+     * @param statusBarColorTransform the status bar color transform
+     * @return the immersion bar
+     */
+    fun statusBarColorTransformInt(@ColorInt statusBarColorTransform:Int):ImmersionBar{
+        mBarParams?.statusBarColorTransform = statusBarColorTransform
+        return this
+    }
+
+    /**
+     * The final color of the navigation bar according to transparency
+     *
+     * @param navigationBarColorTransform the m navigation bar color transform
+     * @return the immersion bar
+     */
+    fun navigationBarColorTransform(@ColorRes navigationBarColorTransform:Int):ImmersionBar{
+        return this.navigationBarColorTransformInt(ContextCompat.getColor(mActivity, navigationBarColorTransform));
+    }
+
+    /**
+     * The final color of the navigation bar according to transparency
+     *
+     * @param navigationBarColorTransform the m navigation bar color transform
+     * @return the immersion bar
+     */
+    fun navigationBarColorTransform(navigationBarColorTransform:String):ImmersionBar{
+        return this.navigationBarColorTransformInt(Color.parseColor(navigationBarColorTransform));
+    }
+
+    /**
+     * The final color of the navigation bar according to transparency
+     *
+     * @param navigationBarColorTransform the m navigation bar color transform
+     * @return the immersion bar
+     */
+    fun navigationBarColorTransformInt(@ColorInt navigationBarColorTransform: Int): ImmersionBar {
+        mBarParams?.navigationBarColorTransform = navigationBarColorTransform
+        return this
+    }
+
+    /**
+     * The final color of the status bar and navigation bar according to transparency
+     *
+     * @param barColorTransform the bar color transform
+     * @return the immersion bar
+     */
+    fun barColorTransform(@ColorRes barColorTransform:Int):ImmersionBar{
+        return this.barColorTransformInt(ContextCompat.getColor(mActivity, barColorTransform));
+    }
+
+    /**
+     * The final color of the status bar and navigation bar according to transparency
+     *
+     * @param barColorTransform the bar color transform
+     * @return the immersion bar
+     */
+    fun barColorTransform(barColorTransform:String):ImmersionBar{
+        return this.barColorTransformInt(Color.parseColor(barColorTransform));
+    }
+
+    /**
+     * The final color of the status bar and navigation bar according to transparency
+     *
+     * @param barColorTransform the bar color transform
+     * @return the immersion bar
+     */
+    fun barColorTransformInt(@ColorInt barColorTransform:Int):ImmersionBar{
+        mBarParams?.statusBarColorTransform = barColorTransform
+        mBarParams?.navigationBarColorTransform = barColorTransform
+        return this
+    }
+
+    /**
+     * Add color transformation supports View
+     *
+     * @param view the view
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColor(view:View):ImmersionBar{
+        return this.addViewSupportTransformColorInt(view, mBarParams?.statusBarColorTransform)
+    }
+
+    /**
+     * Add Color Transformation Support View
+     *
+     * @param view                    the view
+     * @param viewColorAfterTransform the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColor(view:View,@ColorRes viewColorAfterTransform:Int):ImmersionBar{
+        return this.addViewSupportTransformColorInt(view, ContextCompat.getColor(mActivity, viewColorAfterTransform))
+    }
+
+    /**
+     * Add Color Transformation Support View
+     *
+     * @param view                     the view
+     * @param viewColorBeforeTransform the view color before transform
+     * @param viewColorAfterTransform  the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColor(
+        view: View?, @ColorRes viewColorBeforeTransform: Int,
+        @ColorRes viewColorAfterTransform: Int
+    ): ImmersionBar? {
+        return this.addViewSupportTransformColorInt(
+            view,
+            ContextCompat.getColor(mActivity, viewColorBeforeTransform),
+            ContextCompat.getColor(mActivity, viewColorAfterTransform)
+        )
+    }
+
+    /**
+     * Add Color Transformation Support View
+     *
+     * @param view                    the view
+     * @param viewColorAfterTransform the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColor(view: View?, viewColorAfterTransform: String?): ImmersionBar? {
+        return this.addViewSupportTransformColorInt(view, Color.parseColor(viewColorAfterTransform))
+    }
+
+    /**
+     * Add Color Transformation Support View
+     *
+     * @param view                     the view
+     * @param viewColorBeforeTransform the view color before transform
+     * @param viewColorAfterTransform  the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColor(
+        view: View?, viewColorBeforeTransform: String?,
+        viewColorAfterTransform: String?
+    ): ImmersionBar? {
+        return this.addViewSupportTransformColorInt(
+            view,
+            Color.parseColor(viewColorBeforeTransform),
+            Color.parseColor(viewColorAfterTransform)
+        )
+    }
+
+    /**
+     * Add 颜色变换支持View
+     *
+     * @param view                    the view
+     * @param viewColorAfterTransform the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColorInt(view: View?, @ColorInt viewColorAfterTransform: Int): ImmersionBar? {
+        requireNotNull(view) { "View parameter cannot be empty" }
+        val map: MutableMap<Int, Int> = java.util.HashMap()
+        map[mBarParams!!.statusBarColor] = viewColorAfterTransform
+        mBarParams!!.viewMap[view] = map
+        return this
+    }
+
+
+    /**
+     * Add 颜色变换支持View
+     *
+     * @param view                     the view
+     * @param viewColorBeforeTransform the view color before transform
+     * @param viewColorAfterTransform  the view color after transform
+     * @return the immersion bar
+     */
+    fun addViewSupportTransformColorInt(
+        view: View?, @ColorInt viewColorBeforeTransform: Int,
+        @ColorInt viewColorAfterTransform: Int
+    ): ImmersionBar? {
+        requireNotNull(view) { "View参数不能为空" }
+        val map: MutableMap<Int, Int> = java.util.HashMap()
+        map[viewColorBeforeTransform] = viewColorAfterTransform
+        mBarParams!!.viewMap[view] = map
+        return this
+    }
+
+    /**
+     * view透明度
+     * View alpha immersion bar.
+     *
+     * @param viewAlpha the view alpha
+     * @return the immersion bar
+     */
+    fun viewAlpha(@FloatRange(from = 0.0, to = 1.0) viewAlpha: Float): ImmersionBar? {
+        mBarParams!!.viewAlpha = viewAlpha
+        return this
+    }
+
+    /**
+     * Remove support view immersion bar.
+     *
+     * @param view the view
+     * @return the immersion bar
+     */
+    fun removeSupportView(view: View?): ImmersionBar? {
+        requireNotNull(view) { "View parameter cannot be empty" }
+        val map = mBarParams!!.viewMap[view]
+        if (map != null && map.size != 0) {
+            mBarParams!!.viewMap.remove(view)
+        }
+        return this
+    }
+
+    /**
+     * Remove support all view immersion bar.
+     *
+     * @return the immersion bar
+     */
+    fun removeSupportAllView(): ImmersionBar? {
+        if (mBarParams!!.viewMap.size() !== 0) {
+            mBarParams!!.viewMap.clear()
+        }
+        return this
+    }
+
+    /**
+     * 有导航栏的情况下，Activity是否全屏显示
+     *
+     * @param isFullScreen the is full screen
+     * @return the immersion bar
+     */
+    fun fullScreen(isFullScreen: Boolean): ImmersionBar? {
+        mBarParams!!.fullScreen = isFullScreen
+        return this
+    }
+
+    /**
+     * 状态栏透明度
+     *
+     * @param statusAlpha the status alpha
+     * @return the immersion bar
+     */
+    fun statusBarAlpha(@FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar? {
+        mBarParams!!.statusBarAlpha = statusAlpha
+        mBarParams!!.statusBarTempAlpha = statusAlpha
+        return this
+    }
+
+    /**
+     * 导航栏透明度
+     *
+     * @param navigationAlpha the navigation alpha
+     * @return the immersion bar
+     */
+    fun navigationBarAlpha(@FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar? {
+        mBarParams!!.navigationBarAlpha = navigationAlpha
+        mBarParams!!.navigationBarTempAlpha = navigationAlpha
+        return this
+    }
+
+    /**
+     * 状态栏和导航栏透明度
+     *
+     * @param barAlpha the bar alpha
+     * @return the immersion bar
+     */
+    fun barAlpha(@FloatRange(from = 0.0, to = 1.0) barAlpha: Float): ImmersionBar? {
+        mBarParams!!.statusBarAlpha = barAlpha
+        mBarParams!!.statusBarTempAlpha = barAlpha
+        mBarParams!!.navigationBarAlpha = barAlpha
+        mBarParams!!.navigationBarTempAlpha = barAlpha
+        return this
+    }
+
+    /**
+     * 是否启用 自动根据StatusBar和NavigationBar颜色调整深色模式与亮色模式
+     *
+     * @param isEnable true启用 默认false
+     * @return the immersion bar
+     */
+    fun autoDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+        return autoDarkModeEnable(isEnable, 0.2f)
+    }
+
+    /**
+     * 是否启用自动根据StatusBar和NavigationBar颜色调整深色模式与亮色模式
+     * Auto dark mode enable immersion bar.
+     *
+     * @param isEnable          the is enable
+     * @param autoDarkModeAlpha the auto dark mode alpha
+     * @return the immersion bar
+     */
+    fun autoDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+        mBarParams!!.autoStatusBarDarkModeEnable = isEnable
+        mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
+        mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
+        mBarParams!!.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
+        return this
+    }
+
+    /**
+     * 是否启用自动根据StatusBar颜色调整深色模式与亮色模式
+     * Auto status bar dark mode enable immersion bar.
+     *
+     * @param isEnable the is enable
+     * @return the immersion bar
+     */
+    fun autoStatusBarDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+        return autoStatusBarDarkModeEnable(isEnable, 0.2f)
+    }
+
+    /**
+     * 是否启用自动根据StatusBar颜色调整深色模式与亮色模式
+     * Auto status bar dark mode enable immersion bar.
+     *
+     * @param isEnable          the is enable
+     * @param autoDarkModeAlpha the auto dark mode alpha
+     * @return the immersion bar
+     */
+    fun autoStatusBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+        mBarParams!!.autoStatusBarDarkModeEnable = isEnable
+        mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
+        return this
+    }
+
+    /**
+     * 是否启用自动根据StatusBar颜色调整深色模式与亮色模式
+     * Auto navigation bar dark mode enable immersion bar.
+     *
+     * @param isEnable the is enable
+     * @return the immersion bar
+     */
+    fun autoNavigationBarDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+        return autoNavigationBarDarkModeEnable(isEnable, 0.2f)
+    }
+
+    /**
+     * 是否启用自动根据NavigationBar颜色调整深色模式与亮色模式
+     * Auto navigation bar dark mode enable immersion bar.
+     *
+     * @param isEnable          the is enable
+     * @param autoDarkModeAlpha the auto dark mode alpha
+     * @return the immersion bar
+     */
+    fun autoNavigationBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+        mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
+        mBarParams!!.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
+        return this
+    }
+
+
+    /**
+     * 状态栏字体深色或亮色
+     *
+     * @param isDarkFont true 深色
+     * @return the immersion bar
+     */
+    fun statusBarDarkFont(isDarkFont: Boolean): ImmersionBar? {
+        return statusBarDarkFont(isDarkFont, 0.2f)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     override fun onNavigationBarChange(show: Boolean, type: NavigationBarType) {
 
