@@ -12,6 +12,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.FloatRange
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
@@ -817,7 +818,7 @@ class ImmersionBar : ImmersionCallback {
      * @param view the view
      * @return the immersion bar
      */
-    fun removeSupportView(view: View?): ImmersionBar? {
+    fun removeSupportView(view: View?): ImmersionBar {
         requireNotNull(view) { "View parameter cannot be empty" }
         val map = mBarParams!!.viewMap[view]
         if (map != null && map.size != 0) {
@@ -831,7 +832,7 @@ class ImmersionBar : ImmersionCallback {
      *
      * @return the immersion bar
      */
-    fun removeSupportAllView(): ImmersionBar? {
+    fun removeSupportAllView(): ImmersionBar {
         if (mBarParams!!.viewMap.size() !== 0) {
             mBarParams!!.viewMap.clear()
         }
@@ -844,7 +845,7 @@ class ImmersionBar : ImmersionCallback {
      * @param isFullScreen the is full screen
      * @return the immersion bar
      */
-    fun fullScreen(isFullScreen: Boolean): ImmersionBar? {
+    fun fullScreen(isFullScreen: Boolean): ImmersionBar {
         mBarParams!!.fullScreen = isFullScreen
         return this
     }
@@ -855,7 +856,7 @@ class ImmersionBar : ImmersionCallback {
      * @param statusAlpha the status alpha
      * @return the immersion bar
      */
-    fun statusBarAlpha(@FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar? {
+    fun statusBarAlpha(@FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar {
         mBarParams!!.statusBarAlpha = statusAlpha
         mBarParams!!.statusBarTempAlpha = statusAlpha
         return this
@@ -867,7 +868,7 @@ class ImmersionBar : ImmersionCallback {
      * @param navigationAlpha the navigation alpha
      * @return the immersion bar
      */
-    fun navigationBarAlpha(@FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar? {
+    fun navigationBarAlpha(@FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar {
         mBarParams!!.navigationBarAlpha = navigationAlpha
         mBarParams!!.navigationBarTempAlpha = navigationAlpha
         return this
@@ -879,7 +880,7 @@ class ImmersionBar : ImmersionCallback {
      * @param barAlpha the bar alpha
      * @return the immersion bar
      */
-    fun barAlpha(@FloatRange(from = 0.0, to = 1.0) barAlpha: Float): ImmersionBar? {
+    fun barAlpha(@FloatRange(from = 0.0, to = 1.0) barAlpha: Float): ImmersionBar {
         mBarParams!!.statusBarAlpha = barAlpha
         mBarParams!!.statusBarTempAlpha = barAlpha
         mBarParams!!.navigationBarAlpha = barAlpha
@@ -893,7 +894,7 @@ class ImmersionBar : ImmersionCallback {
      * @param isEnable true启用 默认false
      * @return the immersion bar
      */
-    fun autoDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+    fun autoDarkModeEnable(isEnable: Boolean): ImmersionBar {
         return autoDarkModeEnable(isEnable, 0.2f)
     }
 
@@ -905,7 +906,7 @@ class ImmersionBar : ImmersionCallback {
      * @param autoDarkModeAlpha the auto dark mode alpha
      * @return the immersion bar
      */
-    fun autoDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+    fun autoDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
         mBarParams!!.autoStatusBarDarkModeEnable = isEnable
         mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
         mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
@@ -920,7 +921,7 @@ class ImmersionBar : ImmersionCallback {
      * @param isEnable the is enable
      * @return the immersion bar
      */
-    fun autoStatusBarDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+    fun autoStatusBarDarkModeEnable(isEnable: Boolean): ImmersionBar {
         return autoStatusBarDarkModeEnable(isEnable, 0.2f)
     }
 
@@ -932,7 +933,7 @@ class ImmersionBar : ImmersionCallback {
      * @param autoDarkModeAlpha the auto dark mode alpha
      * @return the immersion bar
      */
-    fun autoStatusBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+    fun autoStatusBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
         mBarParams!!.autoStatusBarDarkModeEnable = isEnable
         mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
         return this
@@ -945,7 +946,7 @@ class ImmersionBar : ImmersionCallback {
      * @param isEnable the is enable
      * @return the immersion bar
      */
-    fun autoNavigationBarDarkModeEnable(isEnable: Boolean): ImmersionBar? {
+    fun autoNavigationBarDarkModeEnable(isEnable: Boolean): ImmersionBar {
         return autoNavigationBarDarkModeEnable(isEnable, 0.2f)
     }
 
@@ -957,7 +958,7 @@ class ImmersionBar : ImmersionCallback {
      * @param autoDarkModeAlpha the auto dark mode alpha
      * @return the immersion bar
      */
-    fun autoNavigationBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar? {
+    fun autoNavigationBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
         mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
         mBarParams!!.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
         return this
@@ -970,13 +971,223 @@ class ImmersionBar : ImmersionCallback {
      * @param isDarkFont true 深色
      * @return the immersion bar
      */
-    fun statusBarDarkFont(isDarkFont: Boolean): ImmersionBar? {
+    fun statusBarDarkFont(isDarkFont: Boolean): ImmersionBar {
         return statusBarDarkFont(isDarkFont, 0.2f)
     }
 
+    /**
+     * The font of the status bar is dark or bright. Determine whether the device supports color change of the status bar to set the transparency of the status bar
+     * Status bar dark font immersion bar.
+     *
+     * @param isDarkFont  the is dark font
+     * @param statusAlpha the status alpha 如果不支持状态栏字体变色可以使用statusAlpha来指定状态栏透明度，比如白色状态栏的时候可以用到
+     * @return the immersion bar
+     */
+    fun statusBarDarkFont(isDarkFont: Boolean, @FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar {
+        mBarParams!!.statusBarDarkFont = isDarkFont
+        if (isDarkFont && !ImmersionBar.isSupportStatusBarDarkFont()) {
+            mBarParams!!.statusBarAlpha = statusAlpha
+        } else {
+            mBarParams!!.flymeOSStatusBarFontColor = mBarParams!!.flymeOSStatusBarFontTempColor
+            mBarParams!!.statusBarAlpha = mBarParams!!.statusBarTempAlpha
+        }
+        return this
+    }
 
+    /**
+     * The navigation bar icon is dark or bright, and only supports android o or above
+     * Navigation bar dark icon immersion bar.
+     *
+     * @param isDarkIcon the is dark icon
+     * @return the immersion bar
+     */
+    fun navigationBarDarkIcon(isDarkIcon: Boolean): ImmersionBar {
+        return navigationBarDarkIcon(isDarkIcon, 0.2f)
+    }
 
+    /**
+     * 导航栏图标深色或亮色，只支持android o以上版本，判断设备支不支持导航栏图标变色来设置导航栏透明度
+     * Navigation bar dark icon immersion bar.
+     *
+     * @param isDarkIcon      the is dark icon
+     * @param navigationAlpha the navigation alpha 如果不支持导航栏图标变色可以使用navigationAlpha来指定导航栏透明度，比如白色导航栏的时候可以用到
+     * @return the immersion bar
+     */
+    fun navigationBarDarkIcon(isDarkIcon: Boolean, @FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar {
+        mBarParams!!.navigationBarDarkIcon = isDarkIcon
+        if (isDarkIcon && !ImmersionBar.isSupportNavigationIconDark()) {
+            mBarParams?.navigationBarAlpha = navigationAlpha
+        } else {
+            mBarParams?.navigationBarAlpha = mBarParams!!.navigationBarTempAlpha
+        }
+        return this
+    }
 
+    /**
+     * Modify the font color of the status bar of the mobile phone in the Flyme OS system, which has priority over the statusBarDarkFont (boolean isDarkFont) method
+     * Flyme os status bar font color immersion bar.
+     *
+     * @param flymeOSStatusBarFontColor the flyme os status bar font color
+     * @return the immersion bar
+     */
+    fun flymeOSStatusBarFontColor(@ColorRes flymeOSStatusBarFontColor: Int): ImmersionBar {
+        mBarParams?.flymeOSStatusBarFontColor = ContextCompat.getColor(mActivity, flymeOSStatusBarFontColor)
+        mBarParams?.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        return this
+    }
+
+    /**
+     * Modify the font color of the status bar of the mobile phone in the Flyme OS system, which has priority over the statusBarDarkFont (boolean isDarkFont) method
+     * Flyme os status bar font color immersion bar.
+     *
+     * @param flymeOSStatusBarFontColor the flyme os status bar font color
+     * @return the immersion bar
+     */
+    fun flymeOSStatusBarFontColor(flymeOSStatusBarFontColor: String?): ImmersionBar {
+        mBarParams!!.flymeOSStatusBarFontColor = Color.parseColor(flymeOSStatusBarFontColor)
+        mBarParams!!.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        return this
+    }
+
+    /**
+     * Modify the font color of the status bar of the mobile phone in the Flyme OS system, which has priority over the statusBarDarkFont (boolean isDarkFont) method
+     * Flyme os status bar font color immersion bar.
+     *
+     * @param flymeOSStatusBarFontColor the flyme os status bar font color
+     * @return the immersion bar
+     */
+    fun flymeOSStatusBarFontColorInt(@ColorInt flymeOSStatusBarFontColor: Int): ImmersionBar {
+        mBarParams!!.flymeOSStatusBarFontColor = flymeOSStatusBarFontColor
+        mBarParams!!.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        return this
+    }
+
+    /**
+     * Hide the navigation bar or status bar
+     *
+     * @param barHide the bar hide
+     * @return the immersion bar
+     */
+    fun hideBar(barHide: BarHide?): ImmersionBar {
+        mBarParams!!.barHide = barHide!!
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || OSUtils.isEMUI3_x()) {
+            mBarParams!!.hideNavigationBar = mBarParams!!.barHide === BarHide.FLAG_HIDE_NAVIGATION_BAR ||
+                    mBarParams!!.barHide === BarHide.FLAG_HIDE_BAR
+        }
+        return this
+    }
+
+    /**
+     * To solve the overlapping problem between the layout and the status bar,
+     * this method will call the setFitsSystemWindows method of the system view.
+     * Once the window has been focused and set to false, it will not take effect.
+     * This method will not be used by default.
+     * If it is a gradient color status bar and a top picture,
+     * please do not call this method or set it to false Apply system fits instant bar
+     * Apply system fits immersion bar.
+     *
+     * @param applySystemFits the apply system fits
+     * @return the immersion bar
+     */
+    fun applySystemFits(applySystemFits: Boolean): ImmersionBar {
+        mBarParams!!.fitsLayoutOverlapEnable = !applySystemFits
+        setFitsSystemWindows(mActivity, applySystemFits)
+        return this
+    }
+
+    /**
+     * Solve the problem of overlapping layout and status bar
+     *
+     * @param fits the fits
+     * @return the immersion bar
+     */
+    fun fitsSystemWindows(fits: Boolean): ImmersionBar {
+        mBarParams!!.fits = fits
+        if (mBarParams!!.fits) {
+            if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
+                mFitsStatusBarType = FLAG_FITS_SYSTEM_WINDOWS
+            }
+        } else {
+            mFitsStatusBarType = FLAG_FITS_DEFAULT
+        }
+        return this
+    }
+
+    /**
+     * Solve the overlapping problem between layout and status bar, and support sideslip return
+     * Fits system windows immersion bar.
+     *
+     * @param fits         the fits
+     * @param contentColor the content color 整体界面背景色
+     * @return the immersion bar
+     */
+    fun fitsSystemWindows(fits: Boolean, @ColorRes contentColor: Int): ImmersionBar {
+        return fitsSystemWindowsInt(fits, ContextCompat.getColor(mActivity, contentColor))
+    }
+
+    /**
+     * Solve the overlapping problem between layout and status bar, and support sideslip return
+     * Fits system windows immersion bar.
+     *
+     * @param fits                  the fits
+     * @param contentColor          the content color 整体界面背景色
+     * @param contentColorTransform the content color transform  整体界面变换后的背景色
+     * @param contentAlpha          the content alpha 整体界面透明度
+     * @return the immersion bar
+     */
+    fun fitsSystemWindows(
+        fits: Boolean, @ColorRes contentColor: Int, @ColorRes contentColorTransform: Int, @FloatRange(from = 0f, to = 1f) contentAlpha: Float
+    ): ImmersionBar {
+        return fitsSystemWindowsInt(
+            fits, ContextCompat.getColor(mActivity, contentColor),
+            ContextCompat.getColor(mActivity, contentColorTransform), contentAlpha
+        )
+    }
+
+    /**
+     * Solve the overlapping problem between layout and status bar, and support sideslip return
+     * Fits system windows int immersion bar.
+     *
+     * @param fits         the fits
+     * @param contentColor the content color 整体界面背景色
+     * @return the immersion bar
+     */
+    fun fitsSystemWindowsInt(fits: Boolean, @ColorInt contentColor: Int): ImmersionBar {
+        return fitsSystemWindowsInt(fits, contentColor, Color.BLACK, 0f)
+    }
+
+    /**
+     * Solve the overlapping problem between layout and status bar, and support sideslip return
+     * Fits system windows int immersion bar.
+     *
+     * @param fits                  the fits
+     * @param contentColor          the content color Overall interface background color
+     * @param contentColorTransform the content color transform Background color after overall interface transformation
+     * @param contentAlpha          the content alpha Overall interface transparency
+     * @return the immersion bar
+     */
+    fun fitsSystemWindowsInt(
+        fits: Boolean, @ColorInt contentColor: Int, @ColorInt contentColorTransform: Int, @FloatRange(from = 0f, to = 1f) contentAlpha: Float
+    ): ImmersionBar {
+        mBarParams?.fits = fits
+        mBarParams?.contentColor = contentColor
+        mBarParams?.contentColorTransform = contentColorTransform
+        mBarParams?.contentAlpha = contentAlpha
+        if (mBarParams!!.fits) {
+            if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
+                mFitsStatusBarType = FLAG_FITS_SYSTEM_WINDOWS
+            }
+        } else {
+            mFitsStatusBarType = FLAG_FITS_DEFAULT
+        }
+        mContentView?.setBackgroundColor(
+            ColorUtils.blendARGB(
+                mBarParams!!.contentColor,
+                mBarParams!!.contentColorTransform, mBarParams!!.contentAlpha
+            )
+        )
+        return this
+    }
 
 
 
