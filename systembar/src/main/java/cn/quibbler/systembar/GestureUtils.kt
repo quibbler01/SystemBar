@@ -126,7 +126,7 @@ class GestureBean(
     /**
      * Gesture type
      */
-    var type: NavigationBarType? = null
+    var type: NavigationBarType = NavigationBarType.UNKNOWN
 ) {
 
     override fun toString(): String {
