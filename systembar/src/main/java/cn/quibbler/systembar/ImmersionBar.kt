@@ -11,6 +11,7 @@ import android.view.Window
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.FloatRange
+import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.DialogFragment
@@ -1189,10 +1190,130 @@ class ImmersionBar : ImmersionCallback {
         return this
     }
 
+    /**
+     * Whether it is possible to repair the overlap between the status bar and the layout. The default value is true, which is only applicable to the Immersion Barstatus Bar View,
+     * ImmersionBar#titleBar，ImmersionBar#titleBarMarginTop
+     * Fits layout overlap enable immersion bar.
+     *
+     * @param fitsLayoutOverlapEnable the fits layout overlap enable
+     * @return the immersion bar
+     */
+    fun fitsLayoutOverlapEnable(fitsLayoutOverlapEnable: Boolean): ImmersionBar? {
+        mBarParams?.fitsLayoutOverlapEnable = fitsLayoutOverlapEnable
+        return this
+    }
 
+    /**
+     * Dynamically set status bar layout by status bar height
+     *
+     * @param view the view
+     * @return the immersion bar
+     */
+    fun statusBarView(view: View?): ImmersionBar? {
+        if (view == null) {
+            return this
+        }
+        mBarParams!!.statusBarView = view
+        if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
+            mFitsStatusBarType = FLAG_FITS_STATUS
+        }
+        return this
+    }
 
+    /**
+     * The status bar layout is dynamically set through the status bar height and can only be used in activities
+     *
+     * @param viewId the view id
+     * @return the immersion bar
+     */
+    fun statusBarView(@IdRes viewId: Int): ImmersionBar? {
+        return statusBarView(mActivity.findViewById(viewId))
+    }
 
+    /**
+     * Dynamically set status bar layout by status bar height
+     * Status bar view immersion bar.
+     *
+     * @param viewId   the view id
+     * @param rootView the root view
+     * @return the immersion bar
+     */
+    fun statusBarView(@IdRes viewId: Int, rootView: View): ImmersionBar? {
+        return statusBarView(rootView.findViewById(viewId))
+    }
 
+    /**
+     * There are more ways to solve the overlap between the status bar and the top of the layout
+     * Title bar immersion bar.
+     *
+     * @param view the view
+     * @return the immersion bar
+     */
+    fun titleBar(view: View?): ImmersionBar? {
+        return if (view == null) {
+            this
+        } else titleBar(view, true)
+    }
+
+    /**
+     * There are more ways to solve the overlap between the status bar and the top of the layout
+     * Title bar immersion bar.
+     *
+     * @param view                          the view
+     * @param statusBarColorTransformEnable the status bar flag 默认为true false表示状态栏不支持变色，true表示状态栏支持变色
+     * @return the immersion bar
+     */
+    fun titleBar(view: View?, statusBarColorTransformEnable: Boolean): ImmersionBar? {
+        if (view == null) {
+            return this
+        }
+        if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
+            mFitsStatusBarType = FLAG_FITS_TITLE
+        }
+        mBarParams!!.titleBarView = view
+        mBarParams!!.statusBarColorEnabled = statusBarColorTransformEnable
+        return this
+    }
+
+    /**
+     * There are more ways to solve the overlap between the status bar and the top of the layout.
+     * Only Activity is supported
+     * Title bar immersion bar.
+     *
+     * @param viewId the view id
+     * @return the immersion bar
+     */
+    fun titleBar(@IdRes viewId: Int): ImmersionBar? {
+        return titleBar(viewId, true)
+    }
+
+    /**
+     * Title bar immersion bar.
+     *
+     * @param viewId                        the view id
+     * @param statusBarColorTransformEnable the status bar flag
+     * @return the immersion bar
+     */
+    fun titleBar(@IdRes viewId: Int, statusBarColorTransformEnable: Boolean): ImmersionBar? {
+        return if (mSupportFragment != null && mSupportFragment!!.view != null) {
+            titleBar(mSupportFragment!!.view!!.findViewById(viewId), statusBarColorTransformEnable)
+        } else if (mFragment != null && mFragment!!.view != null) {
+            titleBar(mFragment!!.view!!.findViewById(viewId), statusBarColorTransformEnable)
+        } else {
+            titleBar(mActivity.findViewById(viewId), statusBarColorTransformEnable)
+        }
+    }
+
+    /**
+     * Title bar immersion bar.
+     *
+     * @param viewId   the view id
+     * @param rootView the root view
+     * @return the immersion bar
+     */
+    fun titleBar(@IdRes viewId: Int, rootView: View): ImmersionBar? {
+        return titleBar(rootView.findViewById(viewId), true)
+    }
 
 
 
