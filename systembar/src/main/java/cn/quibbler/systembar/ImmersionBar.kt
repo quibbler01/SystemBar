@@ -609,7 +609,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarColorTransform(@ColorRes statusBarColorTransform: Int): ImmersionBar {
-        return this.statusBarColorTransformInt(ContextCompat.getColor(mActivity,statusBarColorTransform))
+        return this.statusBarColorTransformInt(ContextCompat.getColor(mActivity, statusBarColorTransform))
     }
 
     /**
@@ -618,7 +618,7 @@ class ImmersionBar : ImmersionCallback {
      * @param statusBarColorTransform the status bar color transform
      * @return the immersion bar
      */
-    fun statusBarColorTransform(statusBarColorTransform:String):ImmersionBar{
+    fun statusBarColorTransform(statusBarColorTransform: String): ImmersionBar {
         return this.statusBarColorTransformInt(Color.parseColor(statusBarColorTransform));
     }
 
@@ -628,7 +628,7 @@ class ImmersionBar : ImmersionCallback {
      * @param statusBarColorTransform the status bar color transform
      * @return the immersion bar
      */
-    fun statusBarColorTransformInt(@ColorInt statusBarColorTransform:Int):ImmersionBar{
+    fun statusBarColorTransformInt(@ColorInt statusBarColorTransform: Int): ImmersionBar {
         mBarParams?.statusBarColorTransform = statusBarColorTransform
         return this
     }
@@ -639,7 +639,7 @@ class ImmersionBar : ImmersionCallback {
      * @param navigationBarColorTransform the m navigation bar color transform
      * @return the immersion bar
      */
-    fun navigationBarColorTransform(@ColorRes navigationBarColorTransform:Int):ImmersionBar{
+    fun navigationBarColorTransform(@ColorRes navigationBarColorTransform: Int): ImmersionBar {
         return this.navigationBarColorTransformInt(ContextCompat.getColor(mActivity, navigationBarColorTransform));
     }
 
@@ -649,7 +649,7 @@ class ImmersionBar : ImmersionCallback {
      * @param navigationBarColorTransform the m navigation bar color transform
      * @return the immersion bar
      */
-    fun navigationBarColorTransform(navigationBarColorTransform:String):ImmersionBar{
+    fun navigationBarColorTransform(navigationBarColorTransform: String): ImmersionBar {
         return this.navigationBarColorTransformInt(Color.parseColor(navigationBarColorTransform));
     }
 
@@ -670,7 +670,7 @@ class ImmersionBar : ImmersionCallback {
      * @param barColorTransform the bar color transform
      * @return the immersion bar
      */
-    fun barColorTransform(@ColorRes barColorTransform:Int):ImmersionBar{
+    fun barColorTransform(@ColorRes barColorTransform: Int): ImmersionBar {
         return this.barColorTransformInt(ContextCompat.getColor(mActivity, barColorTransform));
     }
 
@@ -680,7 +680,7 @@ class ImmersionBar : ImmersionCallback {
      * @param barColorTransform the bar color transform
      * @return the immersion bar
      */
-    fun barColorTransform(barColorTransform:String):ImmersionBar{
+    fun barColorTransform(barColorTransform: String): ImmersionBar {
         return this.barColorTransformInt(Color.parseColor(barColorTransform));
     }
 
@@ -690,7 +690,7 @@ class ImmersionBar : ImmersionCallback {
      * @param barColorTransform the bar color transform
      * @return the immersion bar
      */
-    fun barColorTransformInt(@ColorInt barColorTransform:Int):ImmersionBar{
+    fun barColorTransformInt(@ColorInt barColorTransform: Int): ImmersionBar {
         mBarParams?.statusBarColorTransform = barColorTransform
         mBarParams?.navigationBarColorTransform = barColorTransform
         return this
@@ -702,7 +702,7 @@ class ImmersionBar : ImmersionCallback {
      * @param view the view
      * @return the immersion bar
      */
-    fun addViewSupportTransformColor(view:View):ImmersionBar{
+    fun addViewSupportTransformColor(view: View): ImmersionBar {
         return this.addViewSupportTransformColorInt(view, mBarParams?.statusBarColorTransform)
     }
 
@@ -713,7 +713,7 @@ class ImmersionBar : ImmersionCallback {
      * @param viewColorAfterTransform the view color after transform
      * @return the immersion bar
      */
-    fun addViewSupportTransformColor(view:View,@ColorRes viewColorAfterTransform:Int):ImmersionBar{
+    fun addViewSupportTransformColor(view: View, @ColorRes viewColorAfterTransform: Int): ImmersionBar {
         return this.addViewSupportTransformColorInt(view, ContextCompat.getColor(mActivity, viewColorAfterTransform))
     }
 
@@ -1263,7 +1263,7 @@ class ImmersionBar : ImmersionCallback {
      * @param statusBarColorTransformEnable the status bar flag 默认为true false表示状态栏不支持变色，true表示状态栏支持变色
      * @return the immersion bar
      */
-    fun titleBar(view: View?, statusBarColorTransformEnable: Boolean): ImmersionBar? {
+    fun titleBar(view: View?, statusBarColorTransformEnable: Boolean): ImmersionBar {
         if (view == null) {
             return this
         }
@@ -1311,9 +1311,114 @@ class ImmersionBar : ImmersionCallback {
      * @param rootView the root view
      * @return the immersion bar
      */
-    fun titleBar(@IdRes viewId: Int, rootView: View): ImmersionBar? {
+    fun titleBar(@IdRes viewId: Int, rootView: View): ImmersionBar {
         return titleBar(rootView.findViewById(viewId), true)
     }
+
+    /**
+     * There are more ways to solve the overlap between the status bar and the top of the layout. It supports any view
+     * Title bar immersion bar.
+     *
+     * @param viewId                        the view id
+     * @param rootView                      the root view
+     * @param statusBarColorTransformEnable the status bar flag 默认为true false表示状态栏不支持变色，true表示状态栏支持变色
+     * @return the immersion bar
+     */
+    fun titleBar(@IdRes viewId: Int, rootView: View, statusBarColorTransformEnable: Boolean): ImmersionBar {
+        return titleBar(rootView.findViewById(viewId), statusBarColorTransformEnable)
+    }
+
+    /**
+     * The height of the title block drawn from the top is the height of the status bar
+     * Title bar margin top immersion bar.
+     *
+     * @param viewId the view id   标题栏资源id
+     * @return the immersion bar
+     */
+    fun titleBarMarginTop(@IdRes viewId: Int): ImmersionBar {
+        if (mSupportFragment?.view != null) {
+            return titleBarMarginTop(mSupportFragment?.view?.findViewById(viewId))
+        } else if (mFragment?.view != null) {
+            return titleBarMarginTop(mFragment?.view?.findViewById(viewId))
+        } else {
+            return titleBarMarginTop(mActivity?.findViewById(viewId))
+        }
+    }
+
+    /**
+     * The height of the title block drawn from the top is the height of the status bar
+     * Title bar margin top immersion bar.
+     *
+     * @param viewId   the view id  标题栏资源id
+     * @param rootView the root view  布局view
+     * @return the immersion bar
+     */
+    fun titleBarMarginTop(@IdRes viewId: Int, rootView: View): ImmersionBar {
+        return titleBarMarginTop(rootView.findViewById(viewId))
+    }
+
+    /**
+     * The height of the title block drawn from the top is the height of the status bar
+     * Title bar margin top immersion bar.
+     *
+     * @param view the view  要改变的标题栏view
+     * @return the immersion bar
+     */
+    fun titleBarMarginTop(view: View?): ImmersionBar {
+        view?.let {
+            if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
+                mFitsStatusBarType = FLAG_FITS_TITLE_MARGIN_TOP
+            }
+            mBarParams?.titleBarView = it
+        }
+        return this
+    }
+
+    /**
+     * Support the interface with action bar, call this method, and start drawing from the bottom of the action bar
+     * Support action bar immersion bar.
+     *
+     * @param isSupportActionBar the is support action bar
+     * @return the immersion bar
+     */
+    fun supportActionBar(isSupportActionBar:Boolean):ImmersionBar{
+        mBarParams?.isSupportActionBar = isSupportActionBar
+        return this
+    }
+
+    /**
+     * Status bar color transform enable immersion bar.
+     *
+     * @param statusBarColorTransformEnable the status bar flag
+     * @return the immersion bar
+     */
+    fun statusBarColorTransformEnable(statusBarColorTransformEnable:Boolean):ImmersionBar{
+        mBarParams?.statusBarColorEnabled = statusBarColorTransformEnable
+        return this
+    }
+
+    /**
+     * One touch reset of all parameters
+     * Reset immersion bar.
+     *
+     * @return the immersion bar
+     */
+    fun reset():ImmersionBar{
+        mBarParams = BarParams()
+        mFitsStatusBarType = FLAG_FITS_DEFAULT
+        return this
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
