@@ -115,7 +115,7 @@ class BarParams : Cloneable {
     /**
      * Support view color change.
      */
-    var viewMap: Map<View, Map<Int, Int>> = HashMap()
+    var viewMap: HashMap<View, Map<Int, Int>> = HashMap()
 
     /**
      * The View alpha.
