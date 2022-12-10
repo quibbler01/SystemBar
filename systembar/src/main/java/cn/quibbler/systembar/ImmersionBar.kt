@@ -80,7 +80,7 @@ class ImmersionBar : ImmersionCallback {
     /**
      * 用户使用tag增加的bar参数的集合
      */
-    private val mTagMap: Map<String, BarParams> = HashMap()
+    private val mTagMap: HashMap<String, BarParams> = HashMap()
 
     /**
      * 当前顶部布局和状态栏重叠是以哪种方式适配的
@@ -1381,7 +1381,7 @@ class ImmersionBar : ImmersionCallback {
      * @param isSupportActionBar the is support action bar
      * @return the immersion bar
      */
-    fun supportActionBar(isSupportActionBar:Boolean):ImmersionBar{
+    fun supportActionBar(isSupportActionBar: Boolean): ImmersionBar {
         mBarParams?.isSupportActionBar = isSupportActionBar
         return this
     }
@@ -1392,7 +1392,7 @@ class ImmersionBar : ImmersionCallback {
      * @param statusBarColorTransformEnable the status bar flag
      * @return the immersion bar
      */
-    fun statusBarColorTransformEnable(statusBarColorTransformEnable:Boolean):ImmersionBar{
+    fun statusBarColorTransformEnable(statusBarColorTransformEnable: Boolean): ImmersionBar {
         mBarParams?.statusBarColorEnabled = statusBarColorTransformEnable
         return this
     }
@@ -1403,22 +1403,95 @@ class ImmersionBar : ImmersionCallback {
      *
      * @return the immersion bar
      */
-    fun reset():ImmersionBar{
+    fun reset(): ImmersionBar {
         mBarParams = BarParams()
         mFitsStatusBarType = FLAG_FITS_DEFAULT
         return this
     }
 
+    /**
+     * Set a tag for a page to identify the bar attribute of the page.
+     * Add tag bar tag.
+     *
+     * @param tag the tag
+     * @return the bar tag
+     */
+    fun addTag(tag: String?): ImmersionBar {
+        if (tag?.isNotEmpty() != true) {
+            throw IllegalArgumentException("tag cannot be empty")
+        }
+        mBarParams?.clone()?.let {
+            mTagMap[tag] = it
+        }
+        return this
+    }
 
 
+    /**
+     * Restore the parameters of a call according to the tag
+     * Recover immersion bar.
+     *
+     * @param tag the tag
+     * @return the immersion bar
+     */
+    fun getTag(tag: String?): ImmersionBar {
+        if (tag == null || tag.isEmpty()) throw IllegalArgumentException("tag cannot be empty")
+        mTagMap[tag]?.let {
+            mBarParams = it.clone()
+        }
+        return this
+    }
 
+    /**
+     * Solve the conflict between the soft keyboard and the bottom input box. The default is false
+     * Keyboard enable immersion bar.
+     *
+     * @param enable the enable
+     * @return the immersion bar
+     */
+    fun keyboardEnable(enable: Boolean): ImmersionBar {
+        return keyboardEnable(enable, mBarParams?.keyboardMode)
+    }
 
+    /**
+     * Solve the conflict between the soft keyboard and the bottom input box. The default is false
+     *
+     * @param enable       the enable
+     * @param keyboardMode the keyboard mode
+     * @return the immersion bar
+     */
+    fun keyboardEnable(enable: Boolean, keyboardMode: Int?): ImmersionBar {
+        mBarParams?.keyboardEnable = enable
+        mBarParams?.keyboardMode = keyboardMode!!
+        mKeyboardTempEnable = enable
+        return this
+    }
 
+    /**
+     * Modify keyboard mode
+     * Keyboard mode immersion bar.
+     *
+     * @param keyboardMode the keyboard mode
+     * @return the immersion bar
+     */
+    fun keyboardMode(keyboardMode:Int):ImmersionBar{
+        mBarParams?.keyboardMode = keyboardMode
+        return this
+    }
 
-
-
-
-
+    /**
+     * Soft keyboard pop-up closed callback monitoring
+     * Sets on keyboard listener.
+     *
+     * @param onKeyboardListener the on keyboard listener
+     * @return the on keyboard listener
+     */
+    fun setOnKeyboardListener(onKeyboardListener:OnKeyboardListener?):ImmersionBar{
+        if (mBarParams?.onKeyboardListener == null) {
+            mBarParams?.onKeyboardListener = onKeyboardListener
+        }
+        return this
+    }
 
 
 
