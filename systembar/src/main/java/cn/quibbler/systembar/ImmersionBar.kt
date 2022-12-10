@@ -23,6 +23,29 @@ import androidx.fragment.app.Fragment
 @TargetApi(Build.VERSION_CODES.KITKAT)
 class ImmersionBar : ImmersionCallback {
 
+    companion object {
+
+        /**
+         * Use in Activity
+         * With immersion bar.
+         *
+         * @param activity the activity
+         * @return the immersion bar
+         */
+        fun with(activity: Activity): ImmersionBar {
+            return getRetriever().get(activity, false)!!
+        }
+
+        private fun getRetriever(): RequestManagerRetriever {
+            return RequestManagerRetriever
+        }
+
+        private fun isEmpty(str: String?): Boolean {
+            return str == null || str.trim().isEmpty()
+        }
+
+    }
+
     private val mActivity: Activity
     private var mSupportFragment: Fragment? = null
     private var mFragment: android.app.Fragment? = null
@@ -1474,7 +1497,7 @@ class ImmersionBar : ImmersionCallback {
      * @param keyboardMode the keyboard mode
      * @return the immersion bar
      */
-    fun keyboardMode(keyboardMode:Int):ImmersionBar{
+    fun keyboardMode(keyboardMode: Int): ImmersionBar {
         mBarParams?.keyboardMode = keyboardMode
         return this
     }
@@ -1486,23 +1509,126 @@ class ImmersionBar : ImmersionCallback {
      * @param onKeyboardListener the on keyboard listener
      * @return the on keyboard listener
      */
-    fun setOnKeyboardListener(onKeyboardListener:OnKeyboardListener?):ImmersionBar{
+    fun setOnKeyboardListener(onKeyboardListener: OnKeyboardListener?): ImmersionBar {
         if (mBarParams?.onKeyboardListener == null) {
             mBarParams?.onKeyboardListener = onKeyboardListener
         }
         return this
     }
 
+    /**
+     * Navigation bar shows hidden listeners
+     * Sets on navigation bar listener.
+     *
+     * @param onNavigationBarListener the on navigation bar listener
+     * @return the on navigation bar listener
+     */
+    fun setOnNavigationBarListener(onNavigationBarListener: OnNavigationBarListener?): ImmersionBar {
+        if (onNavigationBarListener != null) {
+            if (mBarParams?.onNavigationBarListener == null) {
+                mBarParams?.onNavigationBarListener = onNavigationBarListener
+                NavigationBarObserver.addOnNavigationBarListener(mBarParams?.onNavigationBarListener)
+            }
+        } else {
+            if (mBarParams?.onNavigationBarListener != null) {
+                NavigationBarObserver.removeOnNavigationBarListener(mBarParams?.onNavigationBarListener)
+                mBarParams?.onNavigationBarListener = null
+            }
+        }
+        return this
+    }
 
+    /**
+     * Bar monitoring. This method will be triggered by the first call and horizontal/vertical screen switching.
+     * For example, it can solve the problem of horizontal/vertical screen switching.
+     * In horizontal/horizontal screen cases, the layout is blocked by the banging screen
+     * Sets on bar listener.
+     *
+     * @param onBarListener the on bar listener
+     * @return the on bar listener
+     */
+    fun setOnBarListener(onBarListener: OnBarListener?): ImmersionBar {
+        if (onBarListener != null) {
+            if (mBarParams?.onBarListener == null) {
+                mBarParams?.onBarListener = onBarListener
+            }
+        } else {
+            if (mBarParams?.onBarListener != null) {
+                mBarParams?.onBarListener = null
+            }
+        }
+        return this
+    }
 
+    /**
+     * Can I modify the color of the navigation bar? The default is true
+     * 优先级 navigationBarEnable  > navigationBarWithKitkatEnable > navigationBarWithEMUI3Enable
+     * Navigation bar enable immersion bar.
+     *
+     * @param navigationBarEnable the enable
+     * @return the immersion bar
+     */
+    fun navigationBarEnable(navigationBarEnable: Boolean): ImmersionBar {
+        mBarParams?.navigationBarEnable = navigationBarEnable
+        return this
+    }
 
+    /**
+     * Can modify the 4.4 device navigation bar color? The default is true
+     * 优先级 navigationBarEnable  > navigationBarWithKitkatEnable > navigationBarWithEMUI3Enable
+     *
+     * @param navigationBarWithKitkatEnable the navigation bar with kitkat enable
+     * @return the immersion bar
+     */
+    fun navigationBarWithKitkatEnable(navigationBarWithKitkatEnable: Boolean): ImmersionBar {
+        mBarParams?.navigationBarWithKitkatEnable = navigationBarWithKitkatEnable
+        return this
+    }
+
+    /**
+     * Whether the color of Huawei emui 3.1 navigation bar can be modified. The default value is true.
+     * 优先级 navigationBarEnable  > navigationBarWithKitkatEnable > navigationBarWithEMUI3Enable
+     * Navigation bar with emui 3 enable immersion bar.
+     *
+     * @param navigationBarWithEMUI3Enable the navigation bar with emui 3 1 enable
+     * @return the immersion bar
+     */
+    fun navigationBarWithEMUI3Enable(navigationBarWithEMUI3Enable: Boolean): ImmersionBar {
+        if (isEMUI3_x()) {
+            mBarParams?.navigationBarWithEMUI3Enable = navigationBarWithEMUI3Enable
+            mBarParams?.navigationBarWithKitkatEnable = navigationBarWithEMUI3Enable
+        }
+        return this
+    }
+
+    /**
+     * Whether immersion can be used.
+     * If it is already true, the immersion effect will not disappear before it is changed to false, and the immersion effect set later will not take effect
+     * Bar enable immersion bar.
+     *
+     * @param barEnable the bar enable
+     * @return the immersion bar
+     */
+    fun barEnable(barEnable: Boolean): ImmersionBar {
+        mBarParams?.barEnable = barEnable
+        return this
+    }
 
     override fun onNavigationBarChange(show: Boolean, type: NavigationBarType) {
 
     }
 
     override fun run() {
+        postFitsWindowsBelowLOLLIPOP()
+    }
 
+    private fun postFitsWindowsBelowLOLLIPOP() {
+        //Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
+        fitsWindowsKITKAT()
+        //Solve the problem of manually hiding the navigation bar of Huawei EMUI 3.1 or 3.0
+        if (!mIsFragment && isEMUI3_x()) {
+            fitsWindowsEMUI()
+        }
     }
 
 }
