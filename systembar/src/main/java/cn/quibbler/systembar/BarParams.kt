@@ -227,7 +227,7 @@ class BarParams : Cloneable {
      */
     var onBarListener: OnBarListener? = null
 
-    override fun clone(): BarParams {
+    public override fun clone(): BarParams {
         return super.clone() as BarParams
     }
 
