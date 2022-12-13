@@ -3,15 +3,12 @@ package cn.quibbler.systembar
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Dialog
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.FloatRange
-import androidx.annotation.IdRes
+import android.view.*
+import android.widget.FrameLayout
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.DialogFragment
@@ -34,6 +31,190 @@ class ImmersionBar : ImmersionCallback {
          */
         fun with(activity: Activity): ImmersionBar {
             return getRetriever().get(activity, false)!!
+        }
+
+        /**
+         * Use in Activity
+         *
+         * @param activity the activity
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(activity: Activity, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(activity, isOnly)!!
+        }
+
+        /**
+         * Used in Fragment
+         * With immersion bar.
+         *
+         * @param fragment the fragment
+         * @return the immersion bar
+         */
+        fun with(fragment: Fragment): ImmersionBar {
+            return getRetriever().get(fragment, false)!!
+        }
+
+        /**
+         * Used in Fragment
+         * With immersion bar.
+         *
+         * @param fragment the fragment
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(fragment: Fragment, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(fragment, isOnly)!!
+        }
+
+        /**
+         * Used in Fragment
+         * With immersion bar.
+         *
+         * @param fragment the fragment
+         * @return the immersion bar
+         */
+        fun with(fragment: android.app.Fragment): ImmersionBar {
+            return getRetriever().get(fragment, false)!!
+        }
+
+        /**
+         * Used in Fragment
+         * With immersion bar.
+         *
+         * @param fragment the fragment
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(fragment: android.app.Fragment, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(fragment, isOnly)!!
+        }
+
+        /**
+         * Used in Dialog Fragment
+         * With immersion bar.
+         *
+         * @param dialogFragment the dialog fragment
+         * @return the immersion bar
+         */
+        fun with(dialogFragment: DialogFragment): ImmersionBar {
+            return getRetriever().get(dialogFragment, false)!!
+        }
+
+        /**
+         * Used in Dialog Fragment
+         *
+         * @param dialogFragment the dialog fragment
+         * @param isOnly         the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(dialogFragment: DialogFragment, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(dialogFragment, isOnly)!!
+        }
+
+        /**
+         * Used in Dialog Fragment
+         * With immersion bar.
+         *
+         * @param dialogFragment the dialog fragment
+         * @return the immersion bar
+         */
+        fun with(dialogFragment: android.app.DialogFragment): ImmersionBar {
+            return getRetriever().get(dialogFragment, false)!!
+        }
+
+        /**
+         * Used in Dialog Fragment
+         *
+         * @param dialogFragment the dialog fragment
+         * @param isOnly         the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(dialogFragment: android.app.DialogFragment, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(dialogFragment, isOnly)!!
+        }
+
+        /**
+         * Use in dialog
+         * With immersion bar.
+         *
+         * @param activity the activity
+         * @param dialog   the dialog
+         * @return the immersion bar
+         */
+        fun with(activity: Activity, dialog: Dialog): ImmersionBar {
+            return getRetriever().get(activity, dialog, false)!!
+        }
+
+        /**
+         * Use in dialog
+         *
+         * @param activity the activity
+         * @param dialog   the dialog
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         * @return the immersion bar
+         */
+        fun with(activity: Activity, dialog: Dialog, isOnly: Boolean): ImmersionBar {
+            return getRetriever().get(activity, dialog, isOnly)!!
+        }
+
+        /**
+         * Destroy Fragment
+         *
+         * @param fragment the Fragment
+         */
+        fun destroy(fragment: Fragment): ImmersionBar {
+            return getRetriever().get(fragment, false)!!
+        }
+
+        /**
+         * Destroy Fragment
+         *
+         * @param fragment the Fragment
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         */
+        fun destroy(fragment: Fragment, isOnly: Boolean) {
+            getRetriever().destroy(fragment, isOnly)
+        }
+
+        /**
+         * Destroy Fragment
+         *
+         * @param fragment the android.app.Fragment
+         */
+        fun destroy(fragment: android.app.Fragment) {
+            getRetriever().destroy(fragment, false)
+        }
+
+        /**
+         * Destroy Fragment
+         *
+         * @param fragment the android.app.Fragment
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         */
+        fun destroy(fragment: android.app.Fragment, isOnly: Boolean) {
+            getRetriever().destroy(fragment, isOnly)
+        }
+
+        /**
+         * Destroy in Dialog, excluding Dialog Fragment
+         *
+         * @param activity the activity
+         * @param dialog   the dialog
+         */
+        fun destroy(activity: Activity, dialog: Dialog) {
+            getRetriever().destroy(activity, dialog, false)
+        }
+
+        /**
+         * Destroy in Dialog, excluding Dialog Fragment
+         *
+         * @param activity the activity
+         * @param dialog   the dialog
+         * @param isOnly   the is only fragment实例对象是否唯一，默认是false，不唯一，isOnly影响tag以何种形式生成
+         */
+        fun destroy(activity: Activity, dialog: Dialog, isOnly: Boolean) {
+            getRetriever().destroy(activity, dialog, isOnly)
         }
 
         private fun getRetriever(): RequestManagerRetriever {
@@ -73,7 +254,7 @@ class ImmersionBar : ImmersionCallback {
     /**
      * 用户配置的bar参数
      */
-    private var mBarParams: BarParams? = null
+    private var mBarParams: BarParams
 
     /**
      * 系统bar相关信息
@@ -131,8 +312,255 @@ class ImmersionBar : ImmersionCallback {
      * It can be called successfully after initialization through the above configuration
      */
     fun init() {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mBarParams?.barEnable == true) {
+            //Update Bar's parameters
+            updateBarParams()
+            //Set Immersion
+            setBar()
+            //Correction interface display
+            fitsWindows()
+            //Conflicts between the adaptive soft keyboard and the bottom input box
+            fitsKeyboard()
+            //change view color
+            transformView()
+            mInitialized = true
+        }
     }
+
+    fun onDestroy() {
+        //Cancel listening
+        cancelListener();
+        if (mIsDialog) {
+            mParentBar?.let {
+                it.mBarParams?.keyboardEnable = it.mKeyboardTempEnable
+                if (it.mBarParams?.barHide != BarHide.FLAG_SHOW_BAR) {
+                    it.setBar()
+                }
+            }
+        }
+        mInitialized = false
+    }
+
+    fun onResume() {
+        updateBarConfig()
+        if (!mIsFragment && mInitialized) {
+            mBarParams?.let {
+                if (isEMUI3_x() && it.navigationBarWithEMUI3Enable) {
+                    init()
+                } else {
+                    if (it.barHide != BarHide.FLAG_SHOW_BAR) {
+                        setBar()
+                    }
+                }
+            }
+        }
+    }
+
+    fun onConfigurationChanged(newConfig: Configuration) {
+        updateBarConfig()
+        if (isEMUI3_x() || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            if (mInitialized && !mIsFragment && mBarParams?.navigationBarWithKitkatEnable == true) {
+                init()
+            } else {
+                fitsWindow()
+            }
+        } else {
+            fitsWindow()
+        }
+    }
+
+    /**
+     * Update bar params.
+     */
+    private fun updateBarParams() {
+        adjustDarkModeParams()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //Get information about Bar
+            if (!mInitialized || mIsFragment) {
+                updateBarConfig()
+            }
+            mParentBar?.let {
+                //If used in Fragment, let Activity synchronize the Bar Params parameter of Fragment
+                if (mIsFragment) {
+                    it.mBarParams = mBarParams
+                }
+                //If the keyboard Enable is set to true in the dialog, the keyboard Enable set in the activity is false
+                if (mIsDialog) {
+                    if (it.mKeyboardTempEnable) {
+                        it.mBarParams?.keyboardEnable = false
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Initialize the status bar and navigation bar
+     */
+    fun setBar() {
+        var uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isEMUI3_x()) {
+            //Suitable for Liu Haiping
+            fitsNotchScreen()
+            //Initialize 5.0 or above, including 5.0
+            uiFlags = initBarAboveLOLLIPOP(uiFlags)
+            //Set the status bar font to dark color above Android 6.0
+            uiFlags = setStatusBarDarkFont(uiFlags)
+            //Set the navigation bar icon to dark color above Android 8.0
+            uiFlags = setNavigationIconDark(uiFlags)
+            //Adapt to Android 11 or above
+            setBarDarkFontAboveR()
+        } else {
+            //Initialize below 5.0 and above 4.4 immersed
+            initBarBelowLOLLIPOP()
+        }
+        //Hide the status bar or navigation bar
+        uiFlags = hideBarBelowR(uiFlags)
+        //Apply flag
+        mDecorView?.systemUiVisibility = uiFlags
+        //Adapt to black and white of Xiaomi and Meizu status bar
+        setSpecialBarDarkMode()
+        //Adapt to Android 11 or above
+        hideBarAboveR()
+        //The navigation bar shows hidden monitoring. Currently, only Huawei and Xiaomi mobile phones with the navigation bar are supported
+        if (mBarParams?.onNavigationBarListener != null) {
+            NavigationBarObserver.register(mActivity.application)
+        }
+    }
+
+    private fun setBarDarkFontAboveR() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            setStatusBarDarkFontAboveR()
+            setNavigationIconDarkAboveR()
+        }
+    }
+
+    private fun setSpecialBarDarkMode() {
+        if (isMIUI6Later()) {
+            //Modify miui status bar font color
+            setMIUIBarDark(mWindow, IMMERSION_STATUS_BAR_DARK_MIUI, mBarParams.statusBarDarkFont)
+            //Modify the miui navigation bar icon to black
+            if (mBarParams.navigationBarEnable) {
+                setMIUIBarDark(mWindow, IMMERSION_STATUS_BAR_DARK_MIUI, mBarParams.navigationBarDarkIcon)
+            }
+        }
+        //Modify Flyme OS status bar font color
+        if (isFlymeOS4Later()) {
+            if (mBarParams.flymeOSStatusBarFontColor != 0) {
+                setStatusBarDarkIcon(mActivity, mBarParams.flymeOSStatusBarFontColor)
+            } else {
+                setStatusBarDarkIcon(mActivity, mBarParams.statusBarDarkFont)
+            }
+        }
+    }
+
+    /**
+     * Fits notch screen.
+     */
+    private fun fitsNotchScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !mInitialized) {
+            try {
+                val lp = mWindow?.attributes
+                lp?.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                mWindow?.attributes = lp
+            } catch (ignored: Exception) {
+            }
+        }
+    }
+
+    /**
+     * Initialize the status bar and navigation bar above android 5.0
+     *
+     * @param uiFlags the ui flags
+     * @return the int
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private fun initBarAboveLOLLIPOP(uiFlags: Int): Int {
+        //Get default navigation bar color
+        if (!mInitialized) {
+            mBarParams.defaultNavigationBarColor = mWindow.navigationBarColor
+        }
+        //The activity is displayed in full screen, but the status bar will not be hidden and overwritten. The status bar is still visible, and the top layout of the activity will be covered by the status bar.
+        var uiFlag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or uiFlags
+        if (mBarParams.fullScreen && mBarParams.navigationBarEnable) {
+            //The activity is displayed in full screen, but the navigation bar will not be hidden and overwritten. The navigation bar is still visible, and the bottom layout of the activity will be covered by the navigation bar.
+            uiFlag = uiFlag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+        mWindow?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        //Determine whether there is a navigation bar
+        if (mBarConfig.mHasNavigationBar) {
+            mWindow?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        }
+        //You need to set this to set the color of the status bar and navigation bar
+        mWindow?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        //Set status bar color
+        if (mBarParams.statusBarColorEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mWindow?.isStatusBarContrastEnforced = false
+            }
+            mWindow?.statusBarColor = ColorUtils.blendARGB(mBarParams.statusBarColor, mBarParams.statusBarColorTransform, mBarParams.statusBarAlpha)
+        } else {
+            mWindow?.statusBarColor = ColorUtils.blendARGB(mBarParams.statusBarColor, Color.TRANSPARENT, mBarParams.statusBarAlpha)
+        }
+        //
+        if (mBarParams.navigationBarEnable) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mWindow?.isNavigationBarContrastEnforced = false
+            }
+            mWindow?.navigationBarColor = ColorUtils.blendARGB(mBarParams.navigationBarColor, mBarParams.navigationBarColorTransform, mBarParams.navigationBarAlpha)
+        } else {
+            mWindow?.navigationBarColor = mBarParams.defaultNavigationBarColor;
+        }
+        return uiFlag
+    }
+
+    /**
+     * Initialize the status bar and navigation bar of Android 4.4 and emui3.1
+     */
+    private fun initBarBelowLOLLIPOP() {
+        //Transparent status bar
+        mWindow?.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        //Create a fake status bar
+        setupStatusBarView()
+        if (mBarConfig.mHasNavigationBar || isEMUI3_x()) {
+            if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
+                //Transparent navigation bar, set this. If there is a navigation bar, the bottom layout will be covered by the navigation bar
+                mWindow?.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            } else {
+                mWindow?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            }
+            if (mNavigationBarHeight == 0) {
+                mNavigationBarHeight = mBarConfig.mNavigationBarHeight
+            }
+            if (mNavigationBarWidth == 0) {
+                mNavigationBarWidth = mBarConfig.mNavigationBarWidth
+            }
+            //Create a fake navigation bar
+            setupNavBarView()
+        }
+    }
+
+    /**
+     * Set a status bar with customizable colors
+     */
+    private fun setupStatusBarView() {
+        var statusBarView: View? = mDecorView?.findViewById<View?>(IMMERSION_STATUS_BAR_VIEW_ID)
+        if (statusBarView == null) {
+            statusBarView = View(mActivity)
+            val params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, mBarConfig.mStatusBarHeight)
+            params.gravity = Gravity.TOP
+            statusBarView.layoutParams = params
+            statusBarView.visibility = View.VISIBLE
+            statusBarView.id = IMMERSION_STATUS_BAR_VIEW_ID
+            mDecorView?.addView(statusBarView)
+        }
+        if (mBarParams.statusBarColorEnabled) {
+            statusBarView.setBackgroundColor(ColorUtils.blendARGB(mBarParams.statusBarColor, mBarParams.statusBarColorTransform, mBarParams.statusBarAlpha));
+        } else {
+            statusBarView.setBackgroundColor(ColorUtils.blendARGB(mBarParams.statusBarColor, Color.TRANSPARENT, mBarParams.statusBarAlpha))
+        }
+    }
+
 
     /**
      * Initialize in Activity.
