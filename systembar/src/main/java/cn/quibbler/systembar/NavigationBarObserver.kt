@@ -20,7 +20,7 @@ object NavigationBarObserver : ContentObserver(Handler(Looper.getMainLooper())) 
 
     private var mIsRegister = false
 
-    fun register(application: Application) {
+    fun register(application: Application?) {
         mApplication = application
         mApplication?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && it.contentResolver != null && !mIsRegister) {
