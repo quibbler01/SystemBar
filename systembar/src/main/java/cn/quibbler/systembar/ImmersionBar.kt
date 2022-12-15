@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 
@@ -225,6 +226,37 @@ class ImmersionBar : ImmersionCallback {
             return str == null || str.trim().isEmpty()
         }
 
+        /**
+         * Check whether the layout root node uses the android: fits System Windows="true" attribute
+         * Check fits system windows boolean.
+         *
+         * @param view the view
+         * @return the boolean
+         */
+        fun checkFitsSystemWindows(view: View?): Boolean {
+            if (view == null) {
+                return false
+            }
+            if (view.fitsSystemWindows) {
+                return true
+            }
+            if (view is ViewGroup) {
+                val viewGroup = view as ViewGroup
+                for (i in 0..viewGroup.childCount) {
+                    val childView = viewGroup.getChildAt(i)
+                    if (childView is DrawerLayout) {
+                        if (checkFitsSystemWindows(childView)) {
+                            return true
+                        }
+                    }
+                    if (childView.fitsSystemWindows) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+
     }
 
     private val mActivity: Activity
@@ -303,7 +335,7 @@ class ImmersionBar : ImmersionCallback {
 
     private var mKeyboardTempEnable = false
 
-    private val mPaddingLeft: Int = 0
+    private var mPaddingLeft: Int = 0
     private var mPaddingTop: Int = 0
     private var mPaddingRight: Int = 0
     private var mPaddingBottom: Int = 0
@@ -560,6 +592,211 @@ class ImmersionBar : ImmersionCallback {
             statusBarView.setBackgroundColor(ColorUtils.blendARGB(mBarParams.statusBarColor, Color.TRANSPARENT, mBarParams.statusBarAlpha))
         }
     }
+
+    /**
+     * Set a navigation bar with customizable colors
+     */
+    private fun setupNavBarView() {
+        var navigationBarView: View? = mDecorView?.findViewById(IMMERSION_NAVIGATION_BAR_VIEW_ID)
+        if (navigationBarView == null) {
+            navigationBarView = View(mActivity)
+            navigationBarView.id = IMMERSION_NAVIGATION_BAR_VIEW_ID
+            mDecorView?.addView(navigationBarView)
+        }
+        var params: FrameLayout.LayoutParams? = null
+        if (mBarConfig.isNavigationAtBottom()) {
+            params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, mBarConfig.mNavigationBarHeight)
+            params.gravity = Gravity.BOTTOM
+        } else {
+            params = FrameLayout.LayoutParams(mBarConfig.mNavigationBarWidth, FrameLayout.LayoutParams.MATCH_PARENT)
+            params.gravity = Gravity.END
+        }
+        navigationBarView.layoutParams = params
+        navigationBarView.setBackgroundColor(ColorUtils.blendARGB(mBarParams.navigationBarColor, mBarParams.navigationBarColorTransform, mBarParams.navigationBarAlpha))
+        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable && !mBarParams.hideNavigationBar) {
+            navigationBarView.visibility = View.VISIBLE
+        } else {
+            navigationBarView.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Adjust dark light mode parameters
+     */
+    private fun adjustDarkModeParams() {
+        val statusBarColor = ColorUtils.blendARGB(mBarParams.statusBarColor, mBarParams.statusBarColorTransform, mBarParams.statusBarAlpha)
+        if (mBarParams.autoStatusBarDarkModeEnable && statusBarColor != Color.TRANSPARENT) {
+            val statusBarDarkFont = statusBarColor > IMMERSION_BOUNDARY_COLOR
+            statusBarDarkFont(statusBarDarkFont, mBarParams.autoStatusBarDarkModeAlpha)
+        }
+        val navigationBarColor = ColorUtils.blendARGB(mBarParams.navigationBarColor, mBarParams.navigationBarColorTransform, mBarParams.navigationBarAlpha)
+        if (mBarParams.autoNavigationBarDarkModeEnable && navigationBarColor != Color.TRANSPARENT) {
+            val navigationBarDarkIcon = navigationBarColor > IMMERSION_BOUNDARY_COLOR
+            navigationBarDarkIcon(navigationBarDarkIcon, mBarParams.autoNavigationBarDarkModeAlpha)
+        }
+    }
+
+    /**
+     * Hide or show the status bar and navigation bar。
+     *
+     * @param uiFlags the ui flags
+     * @return the int
+     */
+    private fun hideBarBelowR(uiFlags: Int): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return uiFlags
+        }
+        var uiFlag = uiFlags
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            when (mBarParams.barHide) {
+                BarHide.FLAG_HIDE_BAR -> {
+                    uiFlag = uiFlags or (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.INVISIBLE)
+                }
+                BarHide.FLAG_HIDE_STATUS_BAR -> {
+                    uiFlag = uiFlags or (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.INVISIBLE)
+                }
+                BarHide.FLAG_HIDE_NAVIGATION_BAR -> {
+                    uiFlag = uiFlags or (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+                }
+                BarHide.FLAG_SHOW_BAR -> {
+                    uiFlag = uiFlags or View.SYSTEM_UI_FLAG_VISIBLE
+                }
+                else -> {
+                }
+            }
+        }
+        return uiFlag or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+    }
+
+    /**
+     * Correction interface display
+     */
+    private fun fitsWindows(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isEMUI3_x()) {
+                //Android 5.0 or above solves the overlapping problem of status bar and layout
+                fitsWindowsAboveLOLLIPOP();
+            }else{
+                //Under Android 5.0, the problem of overlapping status bar and layout is solved
+                fitsWindowsBelowLOLLIPOP();
+            }
+            //Overlapping problem between adaptation status bar and layout
+            fitsLayoutOverlap();
+        }
+    }
+
+    /**
+     * Under Android 5.0, the problem of overlapping status bar and layout is solved
+     */
+    private fun fitsWindowsBelowLOLLIPOP(){
+        if (mBarParams.isSupportActionBar) {
+            mIsActionBarBelowLOLLIPOP = true
+            mContentView?.post(this)
+        }else{
+            mIsActionBarBelowLOLLIPOP = false
+            postFitsWindowsBelowLOLLIPOP()
+        }
+    }
+
+    private fun postFitsWindowsBelowLOLLIPOP(){
+        //Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
+        fitsWindowsKITKAT();
+        if (!mIsFragment && isEMUI3_x()) {
+            fitsWindowsEMUI()
+        }
+    }
+
+    /**
+     * Android 5.0 or above solves the overlapping problem of status bar and layout
+     * Fits windows above lollipop.
+     */
+    private fun fitsWindowsAboveLOLLIPOP(){
+        if (checkFitsSystemWindows(mDecorView?.findViewById(android.R.id.content))) {
+            setPadding(0, 0, 0, 0)
+            return
+        }
+        var top = 0
+        if (mBarParams.fits && mFitsStatusBarType == FLAG_FITS_SYSTEM_WINDOWS) {
+            top = mBarConfig.mStatusBarHeight
+        }
+        if (mBarParams.isSupportActionBar) {
+            top = mBarConfig.mStatusBarHeight + mActionBarHeight
+        }
+        setPadding(0, top, 0, 0)
+    }
+
+    /**
+     * Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
+     * Fits windows below lollipop.
+     */
+    private fun fitsWindowsKITKAT(){
+        if (checkFitsSystemWindows(mDecorView?.findViewById(android.R.id.content))) {
+            setPadding(0, 0, 0, 0)
+            return
+        }
+        var top =0
+        var right =0
+        var bottom = 0
+        if (mBarParams.fits && mFitsStatusBarType == FLAG_FITS_SYSTEM_WINDOWS) {
+            top = mBarConfig.mStatusBarHeight
+        }
+        if (mBarParams.isSupportActionBar) {
+            top = mBarConfig.mStatusBarHeight + mActionBarHeight
+        }
+        if (mBarConfig.mHasNavigationBar && mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
+            if (!mBarParams.fullScreen) {
+                if (mBarConfig.isNavigationAtBottom()) {
+                    bottom = mBarConfig.mNavigationBarHeight
+                }else{
+                    right = mBarConfig.mNavigationBarWidth
+                }
+            }
+            if (mBarParams.hideNavigationBar) {
+                if (mBarConfig.isNavigationAtBottom()) {
+                    bottom = 0
+                }else{
+                    right = 0
+                }
+            }else{
+                if (!mBarConfig.isNavigationAtBottom()) {
+                    right = mBarConfig.mNavigationBarWidth
+                }
+            }
+        }
+        setPadding(0, top, right, bottom)
+    }
+
+    /**
+     * Register the listening function of emui 3. x navigation bar
+     */
+    private fun fitsWindowsEMUI(){
+        val navigationBarView: View? = mDecorView?.findViewById(IMMERSION_NAVIGATION_BAR_VIEW_ID)
+        if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
+            if (navigationBarView != null) {
+                EMUI3NavigationBarObserver.addOnNavigationBarListener(this)
+                EMUI3NavigationBarObserver.register(mActivity.application)
+            }
+        }else{
+            EMUI3NavigationBarObserver.removeOnNavigationBarListener(this)
+            navigationBarView?.visibility = View.GONE
+        }
+    }
+
+
+
+
+
+    private fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
+        mContentView?.setPadding(left, top, right, bottom)
+        mPaddingLeft = left
+        mPaddingTop = top
+        mPaddingRight = right
+        mPaddingBottom = bottom
+    }
+
 
 
     /**
