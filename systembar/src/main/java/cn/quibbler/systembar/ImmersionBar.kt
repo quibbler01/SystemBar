@@ -785,9 +785,15 @@ class ImmersionBar : ImmersionCallback {
         }
     }
 
-
-
-
+    /**
+     * Update Bar Config
+     */
+    private fun updateBarConfig(){
+        mBarConfig = BarConfig(mActivity)
+        if (!mInitialized || mIsActionBarBelowLOLLIPOP) {
+            mActionBarHeight = mBarConfig.mActionBarHeight
+        }
+    }
 
     private fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
         mContentView?.setPadding(left, top, right, bottom)
@@ -796,8 +802,6 @@ class ImmersionBar : ImmersionCallback {
         mPaddingRight = right
         mPaddingBottom = bottom
     }
-
-
 
     /**
      * Initialize in Activity.
