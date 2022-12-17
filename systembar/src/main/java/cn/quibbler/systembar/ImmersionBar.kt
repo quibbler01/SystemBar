@@ -674,12 +674,12 @@ class ImmersionBar : ImmersionCallback {
     /**
      * Correction interface display
      */
-    private fun fitsWindows(){
+    private fun fitsWindows() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isEMUI3_x()) {
                 //Android 5.0 or above solves the overlapping problem of status bar and layout
                 fitsWindowsAboveLOLLIPOP();
-            }else{
+            } else {
                 //Under Android 5.0, the problem of overlapping status bar and layout is solved
                 fitsWindowsBelowLOLLIPOP();
             }
@@ -691,17 +691,17 @@ class ImmersionBar : ImmersionCallback {
     /**
      * Under Android 5.0, the problem of overlapping status bar and layout is solved
      */
-    private fun fitsWindowsBelowLOLLIPOP(){
+    private fun fitsWindowsBelowLOLLIPOP() {
         if (mBarParams.isSupportActionBar) {
             mIsActionBarBelowLOLLIPOP = true
             mContentView?.post(this)
-        }else{
+        } else {
             mIsActionBarBelowLOLLIPOP = false
             postFitsWindowsBelowLOLLIPOP()
         }
     }
 
-    private fun postFitsWindowsBelowLOLLIPOP(){
+    private fun postFitsWindowsBelowLOLLIPOP() {
         //Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
         fitsWindowsKITKAT();
         if (!mIsFragment && isEMUI3_x()) {
@@ -713,7 +713,7 @@ class ImmersionBar : ImmersionCallback {
      * Android 5.0 or above solves the overlapping problem of status bar and layout
      * Fits windows above lollipop.
      */
-    private fun fitsWindowsAboveLOLLIPOP(){
+    private fun fitsWindowsAboveLOLLIPOP() {
         if (checkFitsSystemWindows(mDecorView?.findViewById(android.R.id.content))) {
             setPadding(0, 0, 0, 0)
             return
@@ -732,13 +732,13 @@ class ImmersionBar : ImmersionCallback {
      * Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
      * Fits windows below lollipop.
      */
-    private fun fitsWindowsKITKAT(){
+    private fun fitsWindowsKITKAT() {
         if (checkFitsSystemWindows(mDecorView?.findViewById(android.R.id.content))) {
             setPadding(0, 0, 0, 0)
             return
         }
-        var top =0
-        var right =0
+        var top = 0
+        var right = 0
         var bottom = 0
         if (mBarParams.fits && mFitsStatusBarType == FLAG_FITS_SYSTEM_WINDOWS) {
             top = mBarConfig.mStatusBarHeight
@@ -750,17 +750,17 @@ class ImmersionBar : ImmersionCallback {
             if (!mBarParams.fullScreen) {
                 if (mBarConfig.isNavigationAtBottom()) {
                     bottom = mBarConfig.mNavigationBarHeight
-                }else{
+                } else {
                     right = mBarConfig.mNavigationBarWidth
                 }
             }
             if (mBarParams.hideNavigationBar) {
                 if (mBarConfig.isNavigationAtBottom()) {
                     bottom = 0
-                }else{
+                } else {
                     right = 0
                 }
-            }else{
+            } else {
                 if (!mBarConfig.isNavigationAtBottom()) {
                     right = mBarConfig.mNavigationBarWidth
                 }
@@ -772,14 +772,14 @@ class ImmersionBar : ImmersionCallback {
     /**
      * Register the listening function of emui 3. x navigation bar
      */
-    private fun fitsWindowsEMUI(){
+    private fun fitsWindowsEMUI() {
         val navigationBarView: View? = mDecorView?.findViewById(IMMERSION_NAVIGATION_BAR_VIEW_ID)
         if (mBarParams.navigationBarEnable && mBarParams.navigationBarWithKitkatEnable) {
             if (navigationBarView != null) {
                 EMUI3NavigationBarObserver.addOnNavigationBarListener(this)
                 EMUI3NavigationBarObserver.register(mActivity.application)
             }
-        }else{
+        } else {
             EMUI3NavigationBarObserver.removeOnNavigationBarListener(this)
             navigationBarView?.visibility = View.GONE
         }
@@ -788,7 +788,7 @@ class ImmersionBar : ImmersionCallback {
     /**
      * Update Bar Config
      */
-    private fun updateBarConfig(){
+    private fun updateBarConfig() {
         mBarConfig = BarConfig(mActivity)
         if (!mInitialized || mIsActionBarBelowLOLLIPOP) {
             mActionBarHeight = mBarConfig.mActionBarHeight
@@ -2284,7 +2284,56 @@ class ImmersionBar : ImmersionCallback {
     }
 
     override fun onNavigationBarChange(show: Boolean, type: NavigationBarType) {
+        val navigationBarView: View? = mDecorView?.findViewById(IMMERSION_NAVIGATION_BAR_VIEW_ID)
+        navigationBarView?.let {
+            mBarConfig = BarConfig(mActivity)
+            var bottom = mContentView?.paddingBottom
+            var right = mContentView?.paddingRight
+            if (!show) {
+                it.visibility = View.GONE
+                bottom = 0
+                right = 0
+            } else {
+                if (mNavigationBarHeight == 0) {
+                    mNavigationBarHeight = mBarConfig.mNavigationBarWidth
+                }
+                if (mNavigationBarWidth == 0) {
+                    mNavigationBarWidth = mBarConfig.mNavigationBarWidth
+                }
+                if (!mBarParams.hideNavigationBar) {
+                    val params = it.layoutParams as FrameLayout.LayoutParams
+                    if (mBarConfig.isNavigationAtBottom()) {
+                        params.gravity = Gravity.BOTTOM
+                        params.height = mNavigationBarHeight
+                        bottom = if (!mBarParams.fullScreen) mNavigationBarHeight else 0
+                        right = 0
+                    } else {
+                        params.gravity = Gravity.END
+                        params.width = mNavigationBarWidth
+                        bottom = 0
+                        right = if (!mBarParams.fullScreen) mNavigationBarWidth else 0
+                    }
+                    it.layoutParams = params
+                }
+            }
+            setPadding(0, mContentView.paddingTop, right, bottom)
+        }
+    }
 
+    /**
+     * Sets status bar dark font.
+     * Set font color of status bar, android 6.0 or above
+     */
+    private fun setStatusBarDarkFont(uiFlags: Int): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mBarParams.statusBarDarkFont) {
+                return uiFlags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                return uiFlags
+            }
+        } else {
+            return uiFlags
+        }
     }
 
     override fun run() {
