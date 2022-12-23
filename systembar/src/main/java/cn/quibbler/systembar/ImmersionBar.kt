@@ -286,12 +286,12 @@ class ImmersionBar : ImmersionCallback {
     /**
      * 用户配置的bar参数
      */
-    private var mBarParams: BarParams
+    private var mBarParams: BarParams = BarParams()
 
     /**
      * 系统bar相关信息
      */
-    private var mBarConfig: BarConfig? = null
+    private var mBarConfig: BarConfig = BarConfig()
 
     /**
      * 导航栏的高度，适配Emui3系统有用
@@ -455,7 +455,7 @@ class ImmersionBar : ImmersionCallback {
         //Adapt to Android 11 or above
         hideBarAboveR()
         //The navigation bar shows hidden monitoring. Currently, only Huawei and Xiaomi mobile phones with the navigation bar are supported
-        if (mBarParams?.onNavigationBarListener != null) {
+        if (mBarParams.onNavigationBarListener != null) {
             NavigationBarObserver.register(mActivity.application)
         }
     }
@@ -678,13 +678,13 @@ class ImmersionBar : ImmersionCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isEMUI3_x()) {
                 //Android 5.0 or above solves the overlapping problem of status bar and layout
-                fitsWindowsAboveLOLLIPOP();
+                fitsWindowsAboveLOLLIPOP()
             } else {
                 //Under Android 5.0, the problem of overlapping status bar and layout is solved
-                fitsWindowsBelowLOLLIPOP();
+                fitsWindowsBelowLOLLIPOP()
             }
             //Overlapping problem between adaptation status bar and layout
-            fitsLayoutOverlap();
+            fitsLayoutOverlap()
         }
     }
 
@@ -698,14 +698,6 @@ class ImmersionBar : ImmersionCallback {
         } else {
             mIsActionBarBelowLOLLIPOP = false
             postFitsWindowsBelowLOLLIPOP()
-        }
-    }
-
-    private fun postFitsWindowsBelowLOLLIPOP() {
-        //Solve the problem that the bottom of the activity is blocked by the navigation bar when Android 4.4 has a navigation bar, and solve the problem that the status bar and layout overlap when Android 5.0 or below
-        fitsWindowsKITKAT();
-        if (!mIsFragment && isEMUI3_x()) {
-            fitsWindowsEMUI()
         }
     }
 
@@ -905,7 +897,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun transparentStatusBar(): ImmersionBar {
-        mBarParams?.statusBarColor = Color.TRANSPARENT
+        mBarParams.statusBarColor = Color.TRANSPARENT
         return this
     }
 
@@ -915,8 +907,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun transparentNavigationBar(): ImmersionBar {
-        mBarParams?.navigationBarColor = Color.TRANSPARENT
-        mBarParams?.fullScreen = true
+        mBarParams.navigationBarColor = Color.TRANSPARENT
+        mBarParams.fullScreen = true
         return this
     }
 
@@ -926,9 +918,9 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar.
      */
     fun transparentBar(): ImmersionBar {
-        mBarParams?.statusBarColor = Color.TRANSPARENT
-        mBarParams?.navigationBarColor = Color.TRANSPARENT
-        mBarParams?.fullScreen = true
+        mBarParams.statusBarColor = Color.TRANSPARENT
+        mBarParams.navigationBarColor = Color.TRANSPARENT
+        mBarParams.fullScreen = true
         return this
     }
 
@@ -1014,7 +1006,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarColorInt(@ColorInt statusBarColor: Int): ImmersionBar {
-        mBarParams?.statusBarColor = statusBarColor
+        mBarParams.statusBarColor = statusBarColor
         return this
     }
 
@@ -1026,8 +1018,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarColorInt(@ColorInt statusBarColor: Int, @FloatRange(from = 0.0, to = 1.0) alpha: Float): ImmersionBar {
-        mBarParams?.statusBarColor = statusBarColor
-        mBarParams?.statusBarAlpha = alpha
+        mBarParams.statusBarColor = statusBarColor
+        mBarParams.statusBarAlpha = alpha
         return this
     }
 
@@ -1044,9 +1036,9 @@ class ImmersionBar : ImmersionCallback {
         @ColorInt statusBarColorTransform: Int,
         @FloatRange(from = 0.0, to = 1.0) alpha: Float
     ): ImmersionBar {
-        mBarParams?.statusBarColor = statusBarColor
-        mBarParams?.statusBarColorTransform = statusBarColorTransform
-        mBarParams?.statusBarAlpha = alpha
+        mBarParams.statusBarColor = statusBarColor
+        mBarParams.statusBarColorTransform = statusBarColorTransform
+        mBarParams.statusBarAlpha = alpha
         return this
     }
 
@@ -1134,7 +1126,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarColorInt(@ColorInt navigationBarColor: Int): ImmersionBar {
-        mBarParams?.navigationBarColor = navigationBarColor
+        mBarParams.navigationBarColor = navigationBarColor
         return this
     }
 
@@ -1146,8 +1138,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarColorInt(@ColorInt navigationBarColor: Int, @FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar {
-        mBarParams?.navigationBarColor = navigationBarColor
-        mBarParams?.navigationBarAlpha = navigationAlpha
+        mBarParams.navigationBarColor = navigationBarColor
+        mBarParams.navigationBarAlpha = navigationAlpha
         return this
     }
 
@@ -1164,9 +1156,9 @@ class ImmersionBar : ImmersionCallback {
         @ColorInt navigationBarColorTransform: Int,
         @FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float
     ): ImmersionBar {
-        mBarParams?.navigationBarColor = navigationBarColor
-        mBarParams?.navigationBarColorTransform = navigationBarColorTransform
-        mBarParams?.navigationBarAlpha = navigationAlpha
+        mBarParams.navigationBarColor = navigationBarColor
+        mBarParams.navigationBarColorTransform = navigationBarColorTransform
+        mBarParams.navigationBarAlpha = navigationAlpha
         return this
     }
 
@@ -1250,8 +1242,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun barColorInt(@ColorInt barColor: Int): ImmersionBar {
-        mBarParams?.statusBarColor = barColor
-        mBarParams?.navigationBarColor = barColor
+        mBarParams.statusBarColor = barColor
+        mBarParams.navigationBarColor = barColor
         return this
     }
 
@@ -1263,10 +1255,10 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun barColorInt(@ColorInt barColor: Int, @FloatRange(from = 0.0, to = 1.0) barAlpha: Float): ImmersionBar {
-        mBarParams?.statusBarColor = barColor
-        mBarParams?.navigationBarColor = barColor
-        mBarParams?.statusBarAlpha = barAlpha
-        mBarParams?.navigationBarAlpha = barAlpha
+        mBarParams.statusBarColor = barColor
+        mBarParams.navigationBarColor = barColor
+        mBarParams.statusBarAlpha = barAlpha
+        mBarParams.navigationBarAlpha = barAlpha
         return this
     }
 
@@ -1283,14 +1275,14 @@ class ImmersionBar : ImmersionCallback {
         @ColorInt barColorTransform: Int,
         @FloatRange(from = 0.0, to = 1.0) barAlpha: Float
     ): ImmersionBar {
-        mBarParams?.statusBarColor = barColor
-        mBarParams?.navigationBarColor = barColor
+        mBarParams.statusBarColor = barColor
+        mBarParams.navigationBarColor = barColor
 
-        mBarParams?.statusBarColorTransform = barColorTransform
-        mBarParams?.navigationBarColorTransform = barColorTransform
+        mBarParams.statusBarColorTransform = barColorTransform
+        mBarParams.navigationBarColorTransform = barColorTransform
 
-        mBarParams?.statusBarAlpha = barAlpha
-        mBarParams?.navigationBarAlpha = barAlpha
+        mBarParams.statusBarAlpha = barAlpha
+        mBarParams.navigationBarAlpha = barAlpha
         return this
     }
 
@@ -1321,7 +1313,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarColorTransformInt(@ColorInt statusBarColorTransform: Int): ImmersionBar {
-        mBarParams?.statusBarColorTransform = statusBarColorTransform
+        mBarParams.statusBarColorTransform = statusBarColorTransform
         return this
     }
 
@@ -1352,7 +1344,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarColorTransformInt(@ColorInt navigationBarColorTransform: Int): ImmersionBar {
-        mBarParams?.navigationBarColorTransform = navigationBarColorTransform
+        mBarParams.navigationBarColorTransform = navigationBarColorTransform
         return this
     }
 
@@ -1383,8 +1375,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun barColorTransformInt(@ColorInt barColorTransform: Int): ImmersionBar {
-        mBarParams?.statusBarColorTransform = barColorTransform
-        mBarParams?.navigationBarColorTransform = barColorTransform
+        mBarParams.statusBarColorTransform = barColorTransform
+        mBarParams.navigationBarColorTransform = barColorTransform
         return this
     }
 
@@ -1395,7 +1387,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun addViewSupportTransformColor(view: View): ImmersionBar {
-        return this.addViewSupportTransformColorInt(view, mBarParams?.statusBarColorTransform)
+        return this.addViewSupportTransformColorInt(view, mBarParams.statusBarColorTransform)
     }
 
     /**
@@ -1420,7 +1412,7 @@ class ImmersionBar : ImmersionCallback {
     fun addViewSupportTransformColor(
         view: View?, @ColorRes viewColorBeforeTransform: Int,
         @ColorRes viewColorAfterTransform: Int
-    ): ImmersionBar? {
+    ): ImmersionBar {
         return this.addViewSupportTransformColorInt(
             view,
             ContextCompat.getColor(mActivity, viewColorBeforeTransform),
@@ -1435,7 +1427,7 @@ class ImmersionBar : ImmersionCallback {
      * @param viewColorAfterTransform the view color after transform
      * @return the immersion bar
      */
-    fun addViewSupportTransformColor(view: View?, viewColorAfterTransform: String?): ImmersionBar? {
+    fun addViewSupportTransformColor(view: View?, viewColorAfterTransform: String?): ImmersionBar {
         return this.addViewSupportTransformColorInt(view, Color.parseColor(viewColorAfterTransform))
     }
 
@@ -1450,7 +1442,7 @@ class ImmersionBar : ImmersionCallback {
     fun addViewSupportTransformColor(
         view: View?, viewColorBeforeTransform: String?,
         viewColorAfterTransform: String?
-    ): ImmersionBar? {
+    ): ImmersionBar {
         return this.addViewSupportTransformColorInt(
             view,
             Color.parseColor(viewColorBeforeTransform),
@@ -1465,11 +1457,11 @@ class ImmersionBar : ImmersionCallback {
      * @param viewColorAfterTransform the view color after transform
      * @return the immersion bar
      */
-    fun addViewSupportTransformColorInt(view: View?, @ColorInt viewColorAfterTransform: Int): ImmersionBar? {
+    fun addViewSupportTransformColorInt(view: View?, @ColorInt viewColorAfterTransform: Int): ImmersionBar {
         requireNotNull(view) { "View parameter cannot be empty" }
         val map: MutableMap<Int, Int> = java.util.HashMap()
-        map[mBarParams!!.statusBarColor] = viewColorAfterTransform
-        mBarParams!!.viewMap[view] = map
+        map[mBarParams.statusBarColor] = viewColorAfterTransform
+        mBarParams.viewMap[view] = map
         return this
     }
 
@@ -1485,11 +1477,11 @@ class ImmersionBar : ImmersionCallback {
     fun addViewSupportTransformColorInt(
         view: View?, @ColorInt viewColorBeforeTransform: Int,
         @ColorInt viewColorAfterTransform: Int
-    ): ImmersionBar? {
+    ): ImmersionBar {
         requireNotNull(view) { "View参数不能为空" }
         val map: MutableMap<Int, Int> = java.util.HashMap()
         map[viewColorBeforeTransform] = viewColorAfterTransform
-        mBarParams!!.viewMap[view] = map
+        mBarParams.viewMap[view] = map
         return this
     }
 
@@ -1501,7 +1493,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun viewAlpha(@FloatRange(from = 0.0, to = 1.0) viewAlpha: Float): ImmersionBar? {
-        mBarParams!!.viewAlpha = viewAlpha
+        mBarParams.viewAlpha = viewAlpha
         return this
     }
 
@@ -1513,9 +1505,9 @@ class ImmersionBar : ImmersionCallback {
      */
     fun removeSupportView(view: View?): ImmersionBar {
         requireNotNull(view) { "View parameter cannot be empty" }
-        val map = mBarParams!!.viewMap[view]
+        val map = mBarParams.viewMap[view]
         if (map != null && map.size != 0) {
-            mBarParams!!.viewMap.remove(view)
+            mBarParams.viewMap.remove(view)
         }
         return this
     }
@@ -1526,8 +1518,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun removeSupportAllView(): ImmersionBar {
-        if (mBarParams!!.viewMap.size() !== 0) {
-            mBarParams!!.viewMap.clear()
+        if (mBarParams.viewMap.size != 0) {
+            mBarParams.viewMap.clear()
         }
         return this
     }
@@ -1539,7 +1531,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun fullScreen(isFullScreen: Boolean): ImmersionBar {
-        mBarParams!!.fullScreen = isFullScreen
+        mBarParams.fullScreen = isFullScreen
         return this
     }
 
@@ -1550,8 +1542,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarAlpha(@FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar {
-        mBarParams!!.statusBarAlpha = statusAlpha
-        mBarParams!!.statusBarTempAlpha = statusAlpha
+        mBarParams.statusBarAlpha = statusAlpha
+        mBarParams.statusBarTempAlpha = statusAlpha
         return this
     }
 
@@ -1562,8 +1554,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarAlpha(@FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar {
-        mBarParams!!.navigationBarAlpha = navigationAlpha
-        mBarParams!!.navigationBarTempAlpha = navigationAlpha
+        mBarParams.navigationBarAlpha = navigationAlpha
+        mBarParams.navigationBarTempAlpha = navigationAlpha
         return this
     }
 
@@ -1574,10 +1566,10 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun barAlpha(@FloatRange(from = 0.0, to = 1.0) barAlpha: Float): ImmersionBar {
-        mBarParams!!.statusBarAlpha = barAlpha
-        mBarParams!!.statusBarTempAlpha = barAlpha
-        mBarParams!!.navigationBarAlpha = barAlpha
-        mBarParams!!.navigationBarTempAlpha = barAlpha
+        mBarParams.statusBarAlpha = barAlpha
+        mBarParams.statusBarTempAlpha = barAlpha
+        mBarParams.navigationBarAlpha = barAlpha
+        mBarParams.navigationBarTempAlpha = barAlpha
         return this
     }
 
@@ -1600,10 +1592,10 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun autoDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
-        mBarParams!!.autoStatusBarDarkModeEnable = isEnable
-        mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
-        mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
-        mBarParams!!.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
+        mBarParams.autoStatusBarDarkModeEnable = isEnable
+        mBarParams.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
+        mBarParams.autoNavigationBarDarkModeEnable = isEnable
+        mBarParams.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
         return this
     }
 
@@ -1627,8 +1619,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun autoStatusBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
-        mBarParams!!.autoStatusBarDarkModeEnable = isEnable
-        mBarParams!!.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
+        mBarParams.autoStatusBarDarkModeEnable = isEnable
+        mBarParams.autoStatusBarDarkModeAlpha = autoDarkModeAlpha
         return this
     }
 
@@ -1652,8 +1644,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun autoNavigationBarDarkModeEnable(isEnable: Boolean, @FloatRange(from = 0.0, to = 1.0) autoDarkModeAlpha: Float): ImmersionBar {
-        mBarParams!!.autoNavigationBarDarkModeEnable = isEnable
-        mBarParams!!.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
+        mBarParams.autoNavigationBarDarkModeEnable = isEnable
+        mBarParams.autoNavigationBarDarkModeAlpha = autoDarkModeAlpha
         return this
     }
 
@@ -1677,12 +1669,12 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarDarkFont(isDarkFont: Boolean, @FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar {
-        mBarParams!!.statusBarDarkFont = isDarkFont
+        mBarParams.statusBarDarkFont = isDarkFont
         if (isDarkFont && !ImmersionBar.isSupportStatusBarDarkFont()) {
-            mBarParams!!.statusBarAlpha = statusAlpha
+            mBarParams.statusBarAlpha = statusAlpha
         } else {
-            mBarParams!!.flymeOSStatusBarFontColor = mBarParams!!.flymeOSStatusBarFontTempColor
-            mBarParams!!.statusBarAlpha = mBarParams!!.statusBarTempAlpha
+            mBarParams.flymeOSStatusBarFontColor = mBarParams.flymeOSStatusBarFontTempColor
+            mBarParams.statusBarAlpha = mBarParams.statusBarTempAlpha
         }
         return this
     }
@@ -1707,11 +1699,11 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarDarkIcon(isDarkIcon: Boolean, @FloatRange(from = 0.0, to = 1.0) navigationAlpha: Float): ImmersionBar {
-        mBarParams!!.navigationBarDarkIcon = isDarkIcon
+        mBarParams.navigationBarDarkIcon = isDarkIcon
         if (isDarkIcon && !ImmersionBar.isSupportNavigationIconDark()) {
-            mBarParams?.navigationBarAlpha = navigationAlpha
+            mBarParams.navigationBarAlpha = navigationAlpha
         } else {
-            mBarParams?.navigationBarAlpha = mBarParams!!.navigationBarTempAlpha
+            mBarParams.navigationBarAlpha = mBarParams.navigationBarTempAlpha
         }
         return this
     }
@@ -1724,8 +1716,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun flymeOSStatusBarFontColor(@ColorRes flymeOSStatusBarFontColor: Int): ImmersionBar {
-        mBarParams?.flymeOSStatusBarFontColor = ContextCompat.getColor(mActivity, flymeOSStatusBarFontColor)
-        mBarParams?.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        mBarParams.flymeOSStatusBarFontColor = ContextCompat.getColor(mActivity, flymeOSStatusBarFontColor)
+        mBarParams.flymeOSStatusBarFontTempColor = mBarParams.flymeOSStatusBarFontColor
         return this
     }
 
@@ -1737,8 +1729,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun flymeOSStatusBarFontColor(flymeOSStatusBarFontColor: String?): ImmersionBar {
-        mBarParams!!.flymeOSStatusBarFontColor = Color.parseColor(flymeOSStatusBarFontColor)
-        mBarParams!!.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        mBarParams.flymeOSStatusBarFontColor = Color.parseColor(flymeOSStatusBarFontColor)
+        mBarParams.flymeOSStatusBarFontTempColor = mBarParams.flymeOSStatusBarFontColor
         return this
     }
 
@@ -1750,8 +1742,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun flymeOSStatusBarFontColorInt(@ColorInt flymeOSStatusBarFontColor: Int): ImmersionBar {
-        mBarParams!!.flymeOSStatusBarFontColor = flymeOSStatusBarFontColor
-        mBarParams!!.flymeOSStatusBarFontTempColor = mBarParams!!.flymeOSStatusBarFontColor
+        mBarParams.flymeOSStatusBarFontColor = flymeOSStatusBarFontColor
+        mBarParams.flymeOSStatusBarFontTempColor = mBarParams.flymeOSStatusBarFontColor
         return this
     }
 
@@ -1762,10 +1754,10 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun hideBar(barHide: BarHide?): ImmersionBar {
-        mBarParams!!.barHide = barHide!!
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || OSUtils.isEMUI3_x()) {
-            mBarParams!!.hideNavigationBar = mBarParams!!.barHide === BarHide.FLAG_HIDE_NAVIGATION_BAR ||
-                    mBarParams!!.barHide === BarHide.FLAG_HIDE_BAR
+        mBarParams.barHide = barHide!!
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || isEMUI3_x()) {
+            mBarParams.hideNavigationBar = mBarParams.barHide === BarHide.FLAG_HIDE_NAVIGATION_BAR ||
+                    mBarParams.barHide === BarHide.FLAG_HIDE_BAR
         }
         return this
     }
@@ -1783,7 +1775,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun applySystemFits(applySystemFits: Boolean): ImmersionBar {
-        mBarParams!!.fitsLayoutOverlapEnable = !applySystemFits
+        mBarParams.fitsLayoutOverlapEnable = !applySystemFits
         setFitsSystemWindows(mActivity, applySystemFits)
         return this
     }
@@ -1795,8 +1787,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun fitsSystemWindows(fits: Boolean): ImmersionBar {
-        mBarParams!!.fits = fits
-        if (mBarParams!!.fits) {
+        mBarParams.fits = fits
+        if (mBarParams.fits) {
             if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
                 mFitsStatusBarType = FLAG_FITS_SYSTEM_WINDOWS
             }
@@ -1829,7 +1821,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun fitsSystemWindows(
-        fits: Boolean, @ColorRes contentColor: Int, @ColorRes contentColorTransform: Int, @FloatRange(from = 0f, to = 1f) contentAlpha: Float
+        fits: Boolean, @ColorRes contentColor: Int, @ColorRes contentColorTransform: Int, @FloatRange(from = 0.0, to = 1.0) contentAlpha: Float
     ): ImmersionBar {
         return fitsSystemWindowsInt(
             fits, ContextCompat.getColor(mActivity, contentColor),
@@ -1860,13 +1852,13 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun fitsSystemWindowsInt(
-        fits: Boolean, @ColorInt contentColor: Int, @ColorInt contentColorTransform: Int, @FloatRange(from = 0f, to = 1f) contentAlpha: Float
+        fits: Boolean, @ColorInt contentColor: Int, @ColorInt contentColorTransform: Int, @FloatRange(from = 0.0, to = 1.0) contentAlpha: Float
     ): ImmersionBar {
-        mBarParams?.fits = fits
-        mBarParams?.contentColor = contentColor
-        mBarParams?.contentColorTransform = contentColorTransform
-        mBarParams?.contentAlpha = contentAlpha
-        if (mBarParams!!.fits) {
+        mBarParams.fits = fits
+        mBarParams.contentColor = contentColor
+        mBarParams.contentColorTransform = contentColorTransform
+        mBarParams.contentAlpha = contentAlpha
+        if (mBarParams.fits) {
             if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
                 mFitsStatusBarType = FLAG_FITS_SYSTEM_WINDOWS
             }
@@ -1875,8 +1867,8 @@ class ImmersionBar : ImmersionCallback {
         }
         mContentView?.setBackgroundColor(
             ColorUtils.blendARGB(
-                mBarParams!!.contentColor,
-                mBarParams!!.contentColorTransform, mBarParams!!.contentAlpha
+                mBarParams.contentColor,
+                mBarParams.contentColorTransform, mBarParams.contentAlpha
             )
         )
         return this
@@ -1890,8 +1882,8 @@ class ImmersionBar : ImmersionCallback {
      * @param fitsLayoutOverlapEnable the fits layout overlap enable
      * @return the immersion bar
      */
-    fun fitsLayoutOverlapEnable(fitsLayoutOverlapEnable: Boolean): ImmersionBar? {
-        mBarParams?.fitsLayoutOverlapEnable = fitsLayoutOverlapEnable
+    fun fitsLayoutOverlapEnable(fitsLayoutOverlapEnable: Boolean): ImmersionBar {
+        mBarParams.fitsLayoutOverlapEnable = fitsLayoutOverlapEnable
         return this
     }
 
@@ -1901,11 +1893,11 @@ class ImmersionBar : ImmersionCallback {
      * @param view the view
      * @return the immersion bar
      */
-    fun statusBarView(view: View?): ImmersionBar? {
+    fun statusBarView(view: View?): ImmersionBar {
         if (view == null) {
             return this
         }
-        mBarParams!!.statusBarView = view
+        mBarParams.statusBarView = view
         if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
             mFitsStatusBarType = FLAG_FITS_STATUS
         }
@@ -1918,7 +1910,7 @@ class ImmersionBar : ImmersionCallback {
      * @param viewId the view id
      * @return the immersion bar
      */
-    fun statusBarView(@IdRes viewId: Int): ImmersionBar? {
+    fun statusBarView(@IdRes viewId: Int): ImmersionBar {
         return statusBarView(mActivity.findViewById(viewId))
     }
 
@@ -1930,7 +1922,7 @@ class ImmersionBar : ImmersionCallback {
      * @param rootView the root view
      * @return the immersion bar
      */
-    fun statusBarView(@IdRes viewId: Int, rootView: View): ImmersionBar? {
+    fun statusBarView(@IdRes viewId: Int, rootView: View): ImmersionBar {
         return statusBarView(rootView.findViewById(viewId))
     }
 
@@ -1941,7 +1933,7 @@ class ImmersionBar : ImmersionCallback {
      * @param view the view
      * @return the immersion bar
      */
-    fun titleBar(view: View?): ImmersionBar? {
+    fun titleBar(view: View?): ImmersionBar {
         return if (view == null) {
             this
         } else titleBar(view, true)
@@ -1962,8 +1954,8 @@ class ImmersionBar : ImmersionCallback {
         if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
             mFitsStatusBarType = FLAG_FITS_TITLE
         }
-        mBarParams!!.titleBarView = view
-        mBarParams!!.statusBarColorEnabled = statusBarColorTransformEnable
+        mBarParams.titleBarView = view
+        mBarParams.statusBarColorEnabled = statusBarColorTransformEnable
         return this
     }
 
@@ -1988,7 +1980,7 @@ class ImmersionBar : ImmersionCallback {
      */
     fun titleBar(@IdRes viewId: Int, statusBarColorTransformEnable: Boolean): ImmersionBar? {
         return if (mSupportFragment != null && mSupportFragment!!.view != null) {
-            titleBar(mSupportFragment!!.view!!.findViewById(viewId), statusBarColorTransformEnable)
+            titleBar(mSupportFragment?.view?.findViewById(viewId), statusBarColorTransformEnable)
         } else if (mFragment != null && mFragment!!.view != null) {
             titleBar(mFragment!!.view!!.findViewById(viewId), statusBarColorTransformEnable)
         } else {
@@ -2033,7 +2025,7 @@ class ImmersionBar : ImmersionCallback {
         } else if (mFragment?.view != null) {
             return titleBarMarginTop(mFragment?.view?.findViewById(viewId))
         } else {
-            return titleBarMarginTop(mActivity?.findViewById(viewId))
+            return titleBarMarginTop(mActivity.findViewById(viewId))
         }
     }
 
@@ -2061,7 +2053,7 @@ class ImmersionBar : ImmersionCallback {
             if (mFitsStatusBarType == FLAG_FITS_DEFAULT) {
                 mFitsStatusBarType = FLAG_FITS_TITLE_MARGIN_TOP
             }
-            mBarParams?.titleBarView = it
+            mBarParams.titleBarView = it
         }
         return this
     }
@@ -2074,7 +2066,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun supportActionBar(isSupportActionBar: Boolean): ImmersionBar {
-        mBarParams?.isSupportActionBar = isSupportActionBar
+        mBarParams.isSupportActionBar = isSupportActionBar
         return this
     }
 
@@ -2085,7 +2077,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun statusBarColorTransformEnable(statusBarColorTransformEnable: Boolean): ImmersionBar {
-        mBarParams?.statusBarColorEnabled = statusBarColorTransformEnable
+        mBarParams.statusBarColorEnabled = statusBarColorTransformEnable
         return this
     }
 
@@ -2112,7 +2104,7 @@ class ImmersionBar : ImmersionCallback {
         if (tag?.isNotEmpty() != true) {
             throw IllegalArgumentException("tag cannot be empty")
         }
-        mBarParams?.clone()?.let {
+        mBarParams.clone()?.let {
             mTagMap[tag] = it
         }
         return this
@@ -2142,7 +2134,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun keyboardEnable(enable: Boolean): ImmersionBar {
-        return keyboardEnable(enable, mBarParams?.keyboardMode)
+        return keyboardEnable(enable, mBarParams.keyboardMode)
     }
 
     /**
@@ -2153,8 +2145,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun keyboardEnable(enable: Boolean, keyboardMode: Int?): ImmersionBar {
-        mBarParams?.keyboardEnable = enable
-        mBarParams?.keyboardMode = keyboardMode!!
+        mBarParams.keyboardEnable = enable
+        mBarParams.keyboardMode = keyboardMode!!
         mKeyboardTempEnable = enable
         return this
     }
@@ -2167,7 +2159,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun keyboardMode(keyboardMode: Int): ImmersionBar {
-        mBarParams?.keyboardMode = keyboardMode
+        mBarParams.keyboardMode = keyboardMode
         return this
     }
 
@@ -2179,8 +2171,8 @@ class ImmersionBar : ImmersionCallback {
      * @return the on keyboard listener
      */
     fun setOnKeyboardListener(onKeyboardListener: OnKeyboardListener?): ImmersionBar {
-        if (mBarParams?.onKeyboardListener == null) {
-            mBarParams?.onKeyboardListener = onKeyboardListener
+        if (mBarParams.onKeyboardListener == null) {
+            mBarParams.onKeyboardListener = onKeyboardListener
         }
         return this
     }
@@ -2194,14 +2186,14 @@ class ImmersionBar : ImmersionCallback {
      */
     fun setOnNavigationBarListener(onNavigationBarListener: OnNavigationBarListener?): ImmersionBar {
         if (onNavigationBarListener != null) {
-            if (mBarParams?.onNavigationBarListener == null) {
-                mBarParams?.onNavigationBarListener = onNavigationBarListener
-                NavigationBarObserver.addOnNavigationBarListener(mBarParams?.onNavigationBarListener)
+            if (mBarParams.onNavigationBarListener == null) {
+                mBarParams.onNavigationBarListener = onNavigationBarListener
+                NavigationBarObserver.addOnNavigationBarListener(mBarParams.onNavigationBarListener)
             }
         } else {
-            if (mBarParams?.onNavigationBarListener != null) {
-                NavigationBarObserver.removeOnNavigationBarListener(mBarParams?.onNavigationBarListener)
-                mBarParams?.onNavigationBarListener = null
+            if (mBarParams.onNavigationBarListener != null) {
+                NavigationBarObserver.removeOnNavigationBarListener(mBarParams.onNavigationBarListener)
+                mBarParams.onNavigationBarListener = null
             }
         }
         return this
@@ -2218,12 +2210,12 @@ class ImmersionBar : ImmersionCallback {
      */
     fun setOnBarListener(onBarListener: OnBarListener?): ImmersionBar {
         if (onBarListener != null) {
-            if (mBarParams?.onBarListener == null) {
-                mBarParams?.onBarListener = onBarListener
+            if (mBarParams.onBarListener == null) {
+                mBarParams.onBarListener = onBarListener
             }
         } else {
-            if (mBarParams?.onBarListener != null) {
-                mBarParams?.onBarListener = null
+            if (mBarParams.onBarListener != null) {
+                mBarParams.onBarListener = null
             }
         }
         return this
@@ -2238,7 +2230,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarEnable(navigationBarEnable: Boolean): ImmersionBar {
-        mBarParams?.navigationBarEnable = navigationBarEnable
+        mBarParams.navigationBarEnable = navigationBarEnable
         return this
     }
 
@@ -2250,7 +2242,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun navigationBarWithKitkatEnable(navigationBarWithKitkatEnable: Boolean): ImmersionBar {
-        mBarParams?.navigationBarWithKitkatEnable = navigationBarWithKitkatEnable
+        mBarParams.navigationBarWithKitkatEnable = navigationBarWithKitkatEnable
         return this
     }
 
@@ -2264,8 +2256,8 @@ class ImmersionBar : ImmersionCallback {
      */
     fun navigationBarWithEMUI3Enable(navigationBarWithEMUI3Enable: Boolean): ImmersionBar {
         if (isEMUI3_x()) {
-            mBarParams?.navigationBarWithEMUI3Enable = navigationBarWithEMUI3Enable
-            mBarParams?.navigationBarWithKitkatEnable = navigationBarWithEMUI3Enable
+            mBarParams.navigationBarWithEMUI3Enable = navigationBarWithEMUI3Enable
+            mBarParams.navigationBarWithKitkatEnable = navigationBarWithEMUI3Enable
         }
         return this
     }
@@ -2279,7 +2271,7 @@ class ImmersionBar : ImmersionCallback {
      * @return the immersion bar
      */
     fun barEnable(barEnable: Boolean): ImmersionBar {
-        mBarParams?.barEnable = barEnable
+        mBarParams.barEnable = barEnable
         return this
     }
 
@@ -2287,8 +2279,8 @@ class ImmersionBar : ImmersionCallback {
         val navigationBarView: View? = mDecorView?.findViewById(IMMERSION_NAVIGATION_BAR_VIEW_ID)
         navigationBarView?.let {
             mBarConfig = BarConfig(mActivity)
-            var bottom = mContentView?.paddingBottom
-            var right = mContentView?.paddingRight
+            var bottom: Int = mContentView?.paddingBottom ?: 0
+            var right: Int = mContentView?.paddingRight ?: 0
             if (!show) {
                 it.visibility = View.GONE
                 bottom = 0
@@ -2316,7 +2308,7 @@ class ImmersionBar : ImmersionCallback {
                     it.layoutParams = params
                 }
             }
-            setPadding(0, mContentView.paddingTop, right, bottom)
+            setPadding(0, mContentView?.paddingTop ?: 0, right, bottom)
         }
     }
 
