@@ -257,6 +257,198 @@ class ImmersionBar : ImmersionCallback {
             return false
         }
 
+        /**
+         * Increase the height of fix height for the titleblock padding top and height
+         *
+         * @param activity  the activity
+         * @param fixHeight the fix height
+         * @param view      the view
+         */
+        fun setTitleBar(activity: Activity?, fixHeight_: Int, vararg view: View?) {
+            var fixHeight = fixHeight_
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (activity == null) return
+                if (fixHeight < 0) {
+                    fixHeight = 0
+                }
+                for (v in view) {
+                    if (v == null) {
+                        continue
+                    }
+                    val statusBarHeight = fixHeight
+                    var fitsHeight = v.getTag(R.id.immersion_fits_layout_overlap) as Int?
+                    if (fitsHeight == null) {
+                        fitsHeight = 0
+                    }
+                    if (fitsHeight != statusBarHeight) {
+                        v.setTag(R.id.immersion_fits_layout_overlap, statusBarHeight)
+                        var layoutParams = v.layoutParams
+                        if (layoutParams == null) {
+                            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        }
+                        if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT ||
+                            layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT
+                        ) {
+                            val finalLayoutParams = layoutParams
+                            val finalFitsHeight = fitsHeight
+                            v.post(Runnable {
+                                finalLayoutParams.height = v.height + statusBarHeight - finalFitsHeight
+                                v.setPadding(
+                                    v.paddingLeft,
+                                    v.paddingTop + statusBarHeight - finalFitsHeight,
+                                    v.paddingRight,
+                                    v.paddingBottom
+                                )
+                                v.layoutParams = finalLayoutParams
+                            })
+                        } else {
+                            layoutParams.height += statusBarHeight - fitsHeight
+                            v.setPadding(
+                                v.paddingLeft, v.paddingTop + statusBarHeight - fitsHeight,
+                                v.paddingRight, v.paddingBottom
+                            )
+                            v.layoutParams = layoutParams
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Increase the height of fix height for the title bar margin top
+         *
+         * @param activity  the activity
+         * @param fixHeight the fix height
+         * @param view      the view
+         */
+        fun setTitleBarMarginTop(activity: Activity?, fixHeight_: Int, vararg views: View?) {
+            var fixHeight = fixHeight_
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (activity == null) return
+                if (fixHeight < 0) {
+                    fixHeight = 0
+                }
+                for (view in views) {
+                    if (view == null) continue
+
+                    var fitsHeight = view.getTag(R.id.immersion_fits_layout_overlap) as Int?
+                    if (fitsHeight == null) {
+                        fitsHeight = 0
+                    }
+                    if (fitsHeight != fixHeight) {
+                        view.setTag(R.id.immersion_fits_layout_overlap, fixHeight)
+                        var lp = view.layoutParams
+                        if (lp == null) {
+                            lp = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        }
+                        val layoutParams = lp as ViewGroup.MarginLayoutParams
+                        layoutParams.setMargins(layoutParams.leftMargin, layoutParams.topMargin + fixHeight - fitsHeight, layoutParams.rightMargin, layoutParams.bottomMargin)
+                        view.layoutParams = layoutParams
+                    }
+                }
+            }
+        }
+
+        /**
+         * The view is added separately at the position of the title block, and the height is the height of the fix height
+         * Sets status bar view.
+         *
+         * @param activity  the activity
+         * @param fixHeight the fix height
+         * @param view      the view
+         */
+        fun setStatusBarView(activity: Activity?, fixHeight_: Int, vararg views: View?) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (activity == null) return
+                var fixHeight = fixHeight_
+                if (fixHeight < 0) {
+                    fixHeight = 0
+                }
+                for (v in views) {
+                    if (v == null) continue
+                    var fitsHeight = v.getTag(R.id.immersion_fits_layout_overlap) as Int?
+                    if (fitsHeight == null) {
+                        fitsHeight = 0
+                    }
+                    if (fitsHeight != fixHeight) {
+                        v.setTag(R.id.immersion_fits_layout_overlap, fixHeight)
+                        var lp: ViewGroup.LayoutParams? = v.layoutParams
+                        if (lp == null) {
+                            lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+                        }
+                        lp.height = fixHeight
+                        v.layoutParams = lp
+                    }
+                }
+            }
+        }
+
+
+        /**
+         * Call the set Fits System Windows method of the system view
+         * Sets fits system windows.
+         *
+         * @param activity        the activity
+         * @param applySystemFits the apply system fits
+         */
+        fun setFitsSystemWindows(activity: Activity?, applySystemFits: Boolean) {
+            if (activity == null) return
+            setFitsSystemWindows((activity.findViewById(android.R.id.content) as ViewGroup).getChildAt(0), applySystemFits);
+        }
+
+        fun setFitsSystemWindows(activity: Activity?) {
+            setFitsSystemWindows(activity, true)
+        }
+
+        fun setFitsSystemWindows(fragment: Fragment?, applySystemFits: Boolean) {
+            fragment?.let {
+                setFitsSystemWindows(it.activity, applySystemFits)
+            }
+        }
+
+        fun setFitsSystemWindows(fragment: Fragment?) {
+            fragment?.let {
+                setFitsSystemWindows(it.activity)
+            }
+        }
+
+        fun setFitsSystemWindows(fragment: android.app.Fragment?, applySystemFits: Boolean) {
+            fragment?.let {
+                setFitsSystemWindows(it.activity, applySystemFits)
+            }
+        }
+
+        fun setFitsSystemWindows(fragment: android.app.Fragment?) {
+            fragment?.let {
+                setFitsSystemWindows(it.activity)
+            }
+        }
+
+        private fun setFitsSystemWindows(view: View?, applySystemFits: Boolean) {
+            view?.let {
+                if (view is ViewGroup) {
+                    if (view is DrawerLayout) {
+                        setFitsSystemWindows(view.getChildAt(0), applySystemFits)
+                    } else {
+                        view.fitsSystemWindows = applySystemFits
+                        view.clipToPadding = true
+                    }
+                } else {
+                    view.fitsSystemWindows = applySystemFits
+                }
+            }
+        }
+
+        /**
+         * 判断手机支不支持状态栏字体变色
+         * Is support status bar dark font boolean.
+         *
+         * @return the boolean
+         */
+        fun isSupportStatusBarDarkFont(){
+
+        }
+
     }
 
     private val mActivity: Activity
@@ -889,6 +1081,31 @@ class ImmersionBar : ImmersionCallback {
         mBarParams = BarParams()
         mDecorView = mWindow?.decorView as ViewGroup?
         mContentView = mDecorView?.findViewById(android.R.id.content)
+    }
+
+    /**
+     * Overlapping problem between adaptation status bar and layout
+     */
+    private fun fitsLayoutOverlap() {
+        var fixHeight = 0
+        if (mBarParams.fitsLayoutOverlapEnable) {
+            fixHeight = mBarConfig.mStatusBarHeight
+        }
+        when (mFitsStatusBarType) {
+            FLAG_FITS_TITLE -> {
+                //Redraw the title block height by setting the padding top
+                setTitleBar(mActivity, fixHeight, mBarParams.titleBarView)
+            }
+            FLAG_FITS_TITLE_MARGIN_TOP -> {
+                //Redefine the title block height by setting margin top
+                setTitleBarMarginTop(mActivity, fixHeight, mBarParams.titleBarView)
+            }
+            FLAG_FITS_STATUS -> {
+                //Dynamically set status bar layout by status bar height
+                setStatusBarView(mActivity, fixHeight, mBarParams.statusBarView)
+            }
+            else -> {}
+        }
     }
 
     /**
