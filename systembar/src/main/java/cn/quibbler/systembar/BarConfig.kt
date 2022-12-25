@@ -157,4 +157,25 @@ class BarConfig(activity: Activity) {
         return mSmallestWidthDp >= 600 || mInPortrait
     }
 
+    /**
+     * Get the height of the system navigation bar.
+     *
+     * @return The height of the navigation bar (in pixels). If the device does not have soft navigation keys, this will always return 0.
+     */
+    fun getNavigationBarHeight() = mNavigationBarHeight
+
+    /**
+     * Get the width of the system navigation bar when it is placed vertically on the screen.
+     *
+     * @return The width of the navigation bar (in pixels). If the device does not have soft navigation keys, this will always return 0.
+     */
+    fun getNavigationBarWidth() = mNavigationBarWidth
+
+    /**
+     * Get the height of the system status bar.
+     *
+     * @return The height of the status bar (in pixels).
+     */
+    fun getStatusBarHeight() = mStatusBarHeight
+
 }
