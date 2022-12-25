@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
  */
 class FitsKeyboard : ViewTreeObserver.OnGlobalLayoutListener {
 
-    private var mImmersionBar: ImmersionBar? = null
+    private var mImmersionBar: ImmersionBar
     private var mWindow: Window? = null
     private var mDecorView: View? = null
     private var mContentView: View? = null
@@ -28,7 +28,7 @@ class FitsKeyboard : ViewTreeObserver.OnGlobalLayoutListener {
 
     constructor(immersionBar: ImmersionBar) {
         mImmersionBar = immersionBar
-        mWindow = immersionBar.window
+        mWindow = immersionBar.mWindow
         mDecorView = mWindow?.decorView
         val frameLayout: FrameLayout? = mDecorView?.findViewById<FrameLayout>(android.R.id.content)
         if (immersionBar.isDialogFragment()) {
@@ -114,7 +114,7 @@ class FitsKeyboard : ViewTreeObserver.OnGlobalLayoutListener {
                                 keyboardHeight += mImmersionBar.getActionBarHeight() + barConfig.getStatusBarHeight()
                             }
                             if (mImmersionBar.getBarParams().fits) {
-                                keyboardHeight += barConfig.getStatusBarHeight()
+                                keyboardHeight += barConfig.mStatusBarHeight
                             }
                             if (keyboardHeight > navigationBarHeight) {
                                 bottom = keyboardHeight + mPaddingBottom
@@ -145,7 +145,7 @@ class FitsKeyboard : ViewTreeObserver.OnGlobalLayoutListener {
                         keyboardHeight = 0
                     }
                     if (mImmersionBar.getBarParams().onKeyboardListener != null) {
-                        mImmersionBar.getBarParams().onKeyboardListener.onKeyboardChange(isPopup, keyboardHeight)
+                        mImmersionBar.getBarParams().onKeyboardListener?.onKeyboardChange(isPopup, keyboardHeight)
                     }
                     if (!isPopup && mImmersionBar.getBarParams().barHide !== BarHide.FLAG_SHOW_BAR) {
                         mImmersionBar.setBar()
