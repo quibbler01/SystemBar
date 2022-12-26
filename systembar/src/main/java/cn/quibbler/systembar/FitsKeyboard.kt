@@ -95,7 +95,7 @@ class FitsKeyboard : ViewTreeObserver.OnGlobalLayoutListener {
     }
 
     override fun onGlobalLayout() {
-        if (mImmersionBar != null && mImmersionBar.getBarParams() != null && mImmersionBar.getBarParams().keyboardEnable) {
+        if (mImmersionBar.getBarParams().keyboardEnable) {
             val barConfig: BarConfig = mImmersionBar.getBarConfig()
             var bottom = 0
             var keyboardHeight: Int = if (barConfig.isNavigationAtBottom()) barConfig.getNavigationBarHeight() else barConfig.getNavigationBarWidth()

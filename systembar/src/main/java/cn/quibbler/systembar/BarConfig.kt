@@ -40,7 +40,7 @@ class BarConfig(activity: Activity) {
         }
 
         fun getNavigationBarHeightInternal(context: Context): Int {
-            var key: String = if (context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            val key: String = if (context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 IMMERSION_NAVIGATION_BAR_HEIGHT
             } else {
                 IMMERSION_NAVIGATION_BAR_HEIGHT_LANDSCAPE
