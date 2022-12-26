@@ -3,9 +3,11 @@ package cn.quibbler.systembar
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
+import android.provider.SyncStateContract.Constants
 import android.view.*
 import android.widget.FrameLayout
 import androidx.annotation.*
@@ -14,6 +16,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import kotlin.math.abs
 
 /**
  * Android 4.4 and above immersive and bar management
@@ -445,8 +448,46 @@ class ImmersionBar : ImmersionCallback {
          *
          * @return the boolean
          */
-        fun isSupportStatusBarDarkFont(){
+        fun isSupportStatusBarDarkFont(): Boolean {
+            return isMIUI6Later() || isFlymeOS4Later() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        }
 
+        /**
+         * Determine whether the navigation bar icon supports color change
+         * Is support navigation icon dark boolean.
+         *
+         * @return the boolean
+         */
+        fun isSupportNavigationIconDark(): Boolean {
+            return isMIUI6Later() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        }
+
+        /**
+         * Gets status bar height.
+         *
+         * @param activity the activity
+         * @return the status bar height
+         */
+        fun getStatusBarHeight(activity: Activity): Int {
+            return BarConfig(activity).getStatusBarHeight()
+        }
+
+        fun getStatusBarHeight(fragment: Fragment): Int {
+            fragment.activity?.let {
+                return getStatusBarHeight(it)
+            }
+            return 0
+        }
+
+        fun getStatusBarHeight(fragment: android.app.Fragment): Int {
+            fragment.activity?.let {
+                return getStatusBarHeight(it)
+            }
+            return 0
+        }
+
+        fun getStatusBarHeight(context: Context): Int {
+            return BarConfig.getInternalDimensionSize(context, IMMERSION_STATUS_BAR_HEIGHT)
         }
 
     }
@@ -455,7 +496,7 @@ class ImmersionBar : ImmersionCallback {
     private var mSupportFragment: Fragment? = null
     private var mFragment: android.app.Fragment? = null
     private var mDialog: Dialog? = null
-    private var mWindow: Window? = null
+    var mWindow: Window? = null
     private var mDecorView: ViewGroup? = null
     private var mContentView: ViewGroup? = null
     private var mParentBar: ImmersionBar? = null
@@ -468,7 +509,7 @@ class ImmersionBar : ImmersionCallback {
     /**
      * 是否是DialogFragment
      */
-    private var mIsDialogFragment = false
+    var mIsDialogFragment = false
 
     /**
      * 是否是在Dialog里使用
@@ -483,7 +524,7 @@ class ImmersionBar : ImmersionCallback {
     /**
      * 系统bar相关信息
      */
-    private var mBarConfig: BarConfig = BarConfig()
+    private lateinit var mBarConfig: BarConfig
 
     /**
      * 导航栏的高度，适配Emui3系统有用
@@ -536,7 +577,7 @@ class ImmersionBar : ImmersionCallback {
      * It can be called successfully after initialization through the above configuration
      */
     fun init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mBarParams?.barEnable == true) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mBarParams.barEnable) {
             //Update Bar's parameters
             updateBarParams()
             //Set Immersion
@@ -553,11 +594,11 @@ class ImmersionBar : ImmersionCallback {
 
     fun onDestroy() {
         //Cancel listening
-        cancelListener();
+        cancelListener()
         if (mIsDialog) {
             mParentBar?.let {
-                it.mBarParams?.keyboardEnable = it.mKeyboardTempEnable
-                if (it.mBarParams?.barHide != BarHide.FLAG_SHOW_BAR) {
+                it.mBarParams.keyboardEnable = it.mKeyboardTempEnable
+                if (it.mBarParams.barHide != BarHide.FLAG_SHOW_BAR) {
                     it.setBar()
                 }
             }
@@ -568,7 +609,7 @@ class ImmersionBar : ImmersionCallback {
     fun onResume() {
         updateBarConfig()
         if (!mIsFragment && mInitialized) {
-            mBarParams?.let {
+            mBarParams.let {
                 if (isEMUI3_x() && it.navigationBarWithEMUI3Enable) {
                     init()
                 } else {
@@ -583,13 +624,13 @@ class ImmersionBar : ImmersionCallback {
     fun onConfigurationChanged(newConfig: Configuration) {
         updateBarConfig()
         if (isEMUI3_x() || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            if (mInitialized && !mIsFragment && mBarParams?.navigationBarWithKitkatEnable == true) {
+            if (mInitialized && !mIsFragment && mBarParams.navigationBarWithKitkatEnable == true) {
                 init()
             } else {
-                fitsWindow()
+                fitsWindows()
             }
         } else {
-            fitsWindow()
+            fitsWindows()
         }
     }
 
@@ -611,7 +652,7 @@ class ImmersionBar : ImmersionCallback {
                 //If the keyboard Enable is set to true in the dialog, the keyboard Enable set in the activity is false
                 if (mIsDialog) {
                     if (it.mKeyboardTempEnable) {
-                        it.mBarParams?.keyboardEnable = false
+                        it.mBarParams.keyboardEnable = false
                     }
                 }
             }
@@ -659,6 +700,36 @@ class ImmersionBar : ImmersionCallback {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private fun setStatusBarDarkFontAboveR() {
+        val windowInsetsController = mContentView?.windowInsetsController
+        if (mBarParams.statusBarDarkFont) {
+            if (mWindow != null) {
+                unsetSystemUiFlag(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+            }
+            windowInsetsController?.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+        } else {
+            windowInsetsController?.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private fun setNavigationIconDarkAboveR() {
+        val controller = mContentView?.windowInsetsController
+        if (mBarParams.navigationBarDarkIcon) {
+            controller?.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
+        } else {
+            controller?.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
+        }
+    }
+
+    fun unsetSystemUiFlag(systemUiFlag: Int) {
+        val decorView = mWindow?.decorView
+        decorView?.apply {
+            systemUiVisibility = systemUiVisibility and systemUiFlag.inv()
+        }
+    }
+
     private fun setSpecialBarDarkMode() {
         if (isMIUI6Later()) {
             //Modify miui status bar font color
@@ -702,7 +773,7 @@ class ImmersionBar : ImmersionCallback {
     private fun initBarAboveLOLLIPOP(uiFlags: Int): Int {
         //Get default navigation bar color
         if (!mInitialized) {
-            mBarParams.defaultNavigationBarColor = mWindow.navigationBarColor
+            mBarParams.defaultNavigationBarColor = mWindow?.navigationBarColor ?: Color.BLACK
         }
         //The activity is displayed in full screen, but the status bar will not be hidden and overwritten. The status bar is still visible, and the top layout of the activity will be covered by the status bar.
         var uiFlag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or uiFlags
@@ -785,6 +856,18 @@ class ImmersionBar : ImmersionCallback {
         }
     }
 
+    private fun setNavigationIconDark(uiFlags: Int): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (mBarParams.navigationBarDarkIcon) {
+                return uiFlags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            } else {
+                return uiFlags
+            }
+        } else {
+            return uiFlags
+        }
+    }
+
     /**
      * Set a navigation bar with customizable colors
      */
@@ -825,6 +908,34 @@ class ImmersionBar : ImmersionCallback {
         if (mBarParams.autoNavigationBarDarkModeEnable && navigationBarColor != Color.TRANSPARENT) {
             val navigationBarDarkIcon = navigationBarColor > IMMERSION_BOUNDARY_COLOR
             navigationBarDarkIcon(navigationBarDarkIcon, mBarParams.autoNavigationBarDarkModeAlpha)
+        }
+    }
+
+
+    private fun hideBarAboveR() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = mContentView?.windowInsetsController
+            controller?.let {
+                when (mBarParams.barHide) {
+                    BarHide.FLAG_HIDE_BAR -> {
+                        it.hide(WindowInsets.Type.statusBars())
+                        it.hide(WindowInsets.Type.navigationBars())
+                    }
+                    BarHide.FLAG_HIDE_STATUS_BAR -> {
+                        it.hide(WindowInsets.Type.statusBars())
+                    }
+                    BarHide.FLAG_HIDE_NAVIGATION_BAR -> {
+                        it.hide(WindowInsets.Type.navigationBars());
+                    }
+                    BarHide.FLAG_SHOW_BAR -> {
+                        it.show(WindowInsets.Type.statusBars());
+                        it.show(WindowInsets.Type.navigationBars());
+                    }
+                    else -> {}
+                }
+                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+
         }
     }
 
@@ -988,6 +1099,79 @@ class ImmersionBar : ImmersionCallback {
     }
 
     /**
+     * Discolored view
+     * Transform view.
+     */
+    private fun transformView() {
+        if (mBarParams.viewMap.size != 0) {
+            val entrySet = mBarParams.viewMap.entries
+            for (entry in entrySet) {
+                val view: View = entry.key
+                val map: Map<Int, Int> = entry.value
+                var colorBefore = mBarParams.statusBarColor
+                var colorAfter = mBarParams.statusBarColorTransform
+                for (integerEntry in map.entries) {
+                    colorBefore = integerEntry.key
+                    colorAfter = integerEntry.value
+                }
+                if (abs(mBarParams.viewAlpha - 0.0) == 0.0) {
+                    view.setBackgroundColor(ColorUtils.blendARGB(colorBefore, colorAfter, mBarParams.statusBarAlpha))
+                } else {
+                    view.setBackgroundColor(ColorUtils.blendARGB(colorBefore, colorAfter, mBarParams.viewAlpha))
+                }
+            }
+        }
+    }
+
+    /**
+     * Unregister the monitoring function and soft keyboard monitoring of the emui 3. x navigation bar
+     * Cancel listener.
+     */
+    private fun cancelListener() {
+        mFitsKeyboard?.cancel()
+        mFitsKeyboard = null
+        EMUI3NavigationBarObserver.removeOnNavigationBarListener(this)
+        NavigationBarObserver.removeOnNavigationBarListener(mBarParams.onNavigationBarListener)
+    }
+
+    /**
+     * Solve the problem of bottom input box and soft keyboard
+     * Keyboard enable.
+     */
+    private fun fitsKeyboard() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!mIsFragment) {
+                if (mBarParams.keyboardEnable) {
+                    if (mFitsKeyboard == null) {
+                        mFitsKeyboard = FitsKeyboard(this)
+                    }
+                    mFitsKeyboard?.enable(mBarParams.keyboardMode)
+                } else {
+                    mFitsKeyboard?.disable()
+                }
+            } else {
+                mParentBar?.let {
+                    if (it.mBarParams.keyboardEnable) {
+                        if (it.mFitsKeyboard == null) {
+                            it.mFitsKeyboard = FitsKeyboard(it)
+                        }
+                        it.mFitsKeyboard?.enable(it.mBarParams.keyboardMode)
+                    } else {
+                        it.mFitsKeyboard?.disable()
+                    }
+                }
+            }
+        }
+    }
+
+    fun fitsParentBarKeyboard() {
+        mParentBar?.let {
+            it.mFitsKeyboard?.disable()
+            it.mFitsKeyboard?.resetKeyboardHeight()
+        }
+    }
+
+    /**
      * Initialize in Activity.
      * Instantiates a new Immersion bar.
      *
@@ -1014,7 +1198,7 @@ class ImmersionBar : ImmersionCallback {
 
     constructor(fragment: android.app.Fragment) {
         mIsFragment = true
-        mActivity = fragment.activity
+        mActivity = fragment.activity!!
         mFragment = fragment
         checkInitWithActivity()
         initCommonParameter(mActivity.window)
@@ -1045,7 +1229,7 @@ class ImmersionBar : ImmersionCallback {
     constructor(dialogFragment: android.app.DialogFragment) {
         mIsDialog = true
         mIsDialogFragment = true
-        mActivity = dialogFragment.activity
+        mActivity = dialogFragment.activity!!
         mFragment = dialogFragment
         mDialog = dialogFragment.dialog
         checkInitWithActivity()
@@ -1887,7 +2071,7 @@ class ImmersionBar : ImmersionCallback {
      */
     fun statusBarDarkFont(isDarkFont: Boolean, @FloatRange(from = 0.0, to = 1.0) statusAlpha: Float): ImmersionBar {
         mBarParams.statusBarDarkFont = isDarkFont
-        if (isDarkFont && !ImmersionBar.isSupportStatusBarDarkFont()) {
+        if (isDarkFont && !isSupportStatusBarDarkFont()) {
             mBarParams.statusBarAlpha = statusAlpha
         } else {
             mBarParams.flymeOSStatusBarFontColor = mBarParams.flymeOSStatusBarFontTempColor
@@ -2321,7 +2505,7 @@ class ImmersionBar : ImmersionCallback {
         if (tag?.isNotEmpty() != true) {
             throw IllegalArgumentException("tag cannot be empty")
         }
-        mBarParams.clone()?.let {
+        mBarParams.clone().let {
             mTagMap[tag] = it
         }
         return this
@@ -2557,5 +2741,58 @@ class ImmersionBar : ImmersionCallback {
             fitsWindowsEMUI()
         }
     }
+
+    fun isDialogFragment() = mIsDialogFragment
+
+    fun getSupportFragment() = mSupportFragment
+
+    fun getFragment() = mFragment
+
+    /**
+     * Gets padding left.
+     *
+     * @return the padding left
+     */
+    fun getPaddingLeft(): Int = mPaddingLeft
+
+    /**
+     * Gets padding top.
+     *
+     * @return the padding top
+     */
+    fun getPaddingTop(): Int = mPaddingTop
+
+    /**
+     * Gets padding right.
+     *
+     * @return the padding right
+     */
+    fun getPaddingRight(): Int = mPaddingRight
+
+    /**
+     * Gets padding bottom.
+     *
+     * @return the padding bottom
+     */
+    fun getPaddingBottom(): Int = mPaddingBottom
+
+    fun getActivity(): Activity = mActivity
+
+    fun getWindow(): Window? = mWindow
+
+    /**
+     * Gets bar params.
+     *
+     * @return the bar params
+     */
+    fun getBarParams() = mBarParams
+
+    fun getActionBarHeight() = mActionBarHeight
+
+    fun getBarConfig(): BarConfig {
+        return mBarConfig ?: BarConfig(mActivity)
+    }
+
+    fun initialized() = mInitialized
 
 }
